@@ -151,15 +151,6 @@
     border-color: #ffffff;
     color: #ffffff;
   }
-  .nav-dropdown-btn-prefix {
-    opacity: 0.65;
-    font-weight: 600;
-    font-size: 12px;
-  }
-  .nav-dropdown-btn-sep {
-    opacity: 0.4;
-    font-size: 12px;
-  }
   .nav-dropdown-chevron {
     font-size: 14px;
     opacity: 1;
@@ -208,31 +199,6 @@
     background: var(--accent);
     color: #ffffff;
     font-weight: 700;
-  }
-
-  /* Active product context bar */
-  .active-product-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 20px;
-    background: #0d1b3e;
-    border-bottom: 2px solid var(--accent);
-  }
-  .active-product-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-  }
-  .active-product-name {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-on-dark);
-    letter-spacing: 0.02em;
   }
 
   /* Two-column body — offset left for sidebar */
@@ -1052,7 +1018,7 @@
     <div class="nav-divider"></div>
     <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
       <button class="nav-dropdown-btn" id="callPlaybookBtn">
-        <span class="nav-dropdown-btn-prefix">Call Playbook</span><span class="nav-dropdown-btn-sep"> · </span><span id="callPlaybookBtnLabel">—</span><span class="nav-dropdown-chevron">▾</span>
+        <span id="callPlaybookBtnLabel">—</span><span class="nav-dropdown-chevron">▾</span>
       </button>
       <div class="nav-dropdown-menu" id="productBar"></div>
     </div>
@@ -1065,12 +1031,6 @@
 
 <!-- ═══════════ SDR VIEW ═══════════ -->
 <div id="view-sdr" class="view active">
-
-  <!-- Active product bar -->
-  <div class="active-product-bar" id="activeProductBar">
-    <span class="active-product-label">Now viewing:</span>
-    <span class="active-product-name" id="activeProductName">—</span>
-  </div>
 
   <!-- Two-column body -->
   <div class="sdr-body">
