@@ -5,12 +5,17 @@
         "hooks": [
           {
             "type": "command",
-            "shell": "powershell",
             "command": "cd 'c:\\Users\\daniel.im\\OneDrive\\Desktop\\yuja-sdr'; $status = git status --porcelain; if ($status) { git add Pano_Talk_Track.html; git commit -m 'Auto-save changes'; git push origin main } ",
+            "shell": "powershell",
             "timeout": 30
           }
         ]
       }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://wvwcxmqyygtzxdnpfogu.supabase.co/rest/v1/tracks?select=title,body&product_id=eq._nbsjgfl&order=sort_order\" -H \"apikey: sb_publishable_MFYGEU5tFKCZ23j7c3RARQ_5Rk2cSEs\" -H \"Authorization: Bearer sb_publishable_MFYGEU5tFKCZ23j7c3RARQ_5Rk2cSEs\")"
     ]
   }
 }
