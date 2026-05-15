@@ -1983,15 +1983,10 @@ async function importData(e) {
 }
 
 // ── INIT ──────────────────────────────────
-loadData().then(() => {
+(function() {
+  const btn      = document.getElementById('callPlaybookBtn');
+  const menu     = document.getElementById('productBar');
   const dropdown = document.getElementById('callPlaybookDropdown');
-  const divider  = dropdown ? dropdown.previousElementSibling : null;
-  if (dropdown) dropdown.style.display = 'block';
-  if (divider)  divider.style.display  = 'block';
-  renderSDR();
-
-  const btn  = document.getElementById('callPlaybookBtn');
-  const menu = document.getElementById('productBar');
 
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2006,6 +2001,14 @@ loadData().then(() => {
       btn.classList.remove('open');
     }
   });
+})();
+
+loadData().then(() => {
+  const dropdown = document.getElementById('callPlaybookDropdown');
+  const divider  = dropdown ? dropdown.previousElementSibling : null;
+  if (dropdown) dropdown.style.display = 'block';
+  if (divider)  divider.style.display  = 'block';
+  renderSDR();
 });
 </script>
 </body>
