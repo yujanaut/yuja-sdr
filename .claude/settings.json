@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd 'c:\\Users\\daniel.im\\OneDrive\\Desktop\\yuja-sdr'; $status = git status --porcelain; if ($status) { git add -A; git commit -m 'Auto-save changes'; git push origin main } ",
+            "command": "$env:GCM_INTERACTIVE = 'never'; $env:GIT_TERMINAL_PROMPT = '0'; Set-Location 'c:\\Users\\daniel.im\\OneDrive\\Desktop\\yuja-sdr'; $status = git status --porcelain; if ($status) { git add -A; git commit -m 'Auto-save changes'; git push origin main }",
             "shell": "powershell",
             "timeout": 120
           }
