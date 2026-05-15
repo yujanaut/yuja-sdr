@@ -123,57 +123,63 @@
      SDR VIEW — TWO COLUMN LAYOUT
   ══════════════════════════════════════════ */
 
-  /* ── PRODUCT SIDEBAR ── */
-  .product-sidebar {
-    position: fixed;
-    left: 0;
-    top: var(--nav-h);
-    height: calc(100vh - var(--nav-h));
-    width: 42px;
-    background: #0d1b3e;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: width 0.2s ease;
-    overflow: hidden;
-    border-right: 3px solid var(--accent);
-    box-shadow: 3px 0 12px rgba(0,169,157,0.25);
-  }
-  .product-sidebar:hover {
-    width: 180px;
-  }
-  .product-sidebar-label {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-    padding: 20px 0;
-    white-space: nowrap;
-    transition: opacity 0.15s;
+  /* ── NAV DROPDOWN ── */
+  .nav-dropdown {
+    position: relative;
     flex-shrink: 0;
   }
-  .product-sidebar:hover .product-sidebar-label { opacity: 0; width: 0; padding: 0; overflow: hidden; }
-  .product-sidebar-items {
+  .nav-dropdown-btn {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 12px 0;
-    gap: 2px;
-    opacity: 0;
-    transition: opacity 0.15s 0.05s;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius);
+    color: #ffffff;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
   }
-  .product-sidebar:hover .product-sidebar-items { opacity: 1; }
+  .nav-dropdown-btn:hover,
+  .nav-dropdown:hover .nav-dropdown-btn {
+    background: rgba(255,255,255,0.15);
+    border-color: var(--accent-on-dark);
+    color: var(--accent-on-dark);
+  }
+  .nav-dropdown-chevron {
+    font-size: 10px;
+    opacity: 0.7;
+    transition: transform 0.2s;
+  }
+  .nav-dropdown:hover .nav-dropdown-chevron { transform: rotate(180deg); }
+
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 180px;
+    background: #0d1b3e;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    padding: 6px;
+    z-index: 300;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+
   .product-tab {
+    display: block;
     width: 100%;
-    padding: 10px 16px;
+    padding: 9px 14px;
     border: none;
-    border-radius: 0;
+    border-radius: 6px;
     text-align: left;
     white-space: nowrap;
     background: transparent;
@@ -186,7 +192,7 @@
     letter-spacing: 0.01em;
   }
   .product-tab:hover {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.1);
     color: #ffffff;
   }
   .product-tab.active {
@@ -203,7 +209,6 @@
     height: calc(100vh - var(--nav-h));
     overflow: hidden;
     min-width: 0;
-    margin-left: 42px;
   }
 
   /* ── RIGHT: Talk Track ── */
@@ -615,7 +620,6 @@
 
   /* ── MOBILE ── */
   @media (max-width: 768px) {
-    .product-sidebar { display: none !important; }
     .sdr-body {
       display: block;
       height: auto;
@@ -1010,8 +1014,13 @@
   <div class="nav-left">
     <div class="nav-brand">
       <img src="yuja_logo_final.png" alt="YuJa">
-      <span class="sep">|</span>
-      <span class="sub">Call Playbook</span>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
+      <button class="nav-dropdown-btn">
+        Call Playbook <span class="nav-dropdown-chevron">▾</span>
+      </button>
+      <div class="nav-dropdown-menu" id="productBar"></div>
     </div>
   </div>
   <div class="nav-actions" id="navActions">
@@ -1022,12 +1031,6 @@
 
 <!-- ═══════════ SDR VIEW ═══════════ -->
 <div id="view-sdr" class="view active">
-
-  <!-- Product sidebar -->
-  <div class="product-sidebar" id="productSidebar">
-    <div class="product-sidebar-label">Products</div>
-    <div class="product-sidebar-items" id="productBar"></div>
-  </div>
 
   <!-- Two-column body -->
   <div class="sdr-body">
@@ -1415,23 +1418,27 @@ function showView(v) {
   document.getElementById('view-' + v).classList.add('active');
   const adminBtn  = document.getElementById('adminNavBtn');
   const backBtn   = document.getElementById('backBtn');
-  const sidebar   = document.getElementById('productSidebar');
+  const dropdown  = document.getElementById('callPlaybookDropdown');
+  const divider   = dropdown ? dropdown.previousElementSibling : null;
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
     adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
-    if (sidebar) sidebar.style.display = 'none';
+    if (dropdown) dropdown.style.display = 'none';
+    if (divider) divider.style.display = 'none';
   } else if (v === 'sdr') {
     adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
-    if (sidebar) sidebar.style.display = 'flex';
+    if (dropdown) dropdown.style.display = 'block';
+    if (divider) divider.style.display = 'block';
     renderSDR();
   } else {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
-    if (sidebar) sidebar.style.display = 'none';
+    if (dropdown) dropdown.style.display = 'none';
+    if (divider) divider.style.display = 'none';
   }
 }
 
