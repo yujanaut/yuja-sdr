@@ -776,21 +776,26 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: #0d1b3e;
+    background: #1e293b;
     color: #ffffff;
     font-family: var(--sans);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 10px 18px;
+    padding: 11px 20px;
     border-radius: var(--radius);
     opacity: 0;
     transform: translateY(8px);
-    transition: all 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
     z-index: 999;
     pointer-events: none;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.12);
+    min-width: 180px;
+    text-align: center;
   }
   .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: #166534; border-color: #22c55e; }
+  .toast.error   { background: #7f1d1d; border-color: #ef4444; }
+  .toast.deleted { background: #1e293b; border-color: rgba(255,255,255,0.18); }
 
   .ref-row {
     display: flex;
@@ -1212,7 +1217,7 @@ async function loadData() {
     data.objections = objections.map(o => ({ id: o.id, productId: o.product_id, text: o.text, response: o.response }));
   } catch(e) {
     console.error('Failed to load data:', e);
-    toast('Could not connect to database');
+    toast('Could not connect to database', 'error');
   }
 }
 
@@ -1221,11 +1226,13 @@ function uid() { return '_' + Math.random().toString(36).slice(2,9); }
 function getPass() { return localStorage.getItem(PASS_KEY) || 'yuja2024'; }
 function setPass(p) { localStorage.setItem(PASS_KEY, p); }
 
-function toast(msg) {
+let _toastTimer = null;
+function toast(msg, type = 'neutral') {
   const t = document.getElementById('toast');
+  if (_toastTimer) clearTimeout(_toastTimer);
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  t.className = 'toast show' + (type !== 'neutral' ? ' ' + type : '');
+  _toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2500);
 }
 
 function escHtml(str) {
@@ -1282,17 +1289,18 @@ function doLogin() {
     renderAdmin();
   } else {
     document.getElementById('loginError').classList.add('visible');
+    toast('Incorrect password', 'error');
   }
 }
 function changePassword() {
   const a = document.getElementById('newPass1').value;
   const b = document.getElementById('newPass2').value;
-  if (!a) return toast('Enter a password');
-  if (a !== b) return toast('Passwords do not match');
+  if (!a) return toast('Enter a password', 'error');
+  if (a !== b) return toast('Passwords do not match', 'error');
   setPass(a);
   document.getElementById('newPass1').value = '';
   document.getElementById('newPass2').value = '';
-  toast('Password updated');
+  toast('Password updated', 'success');
 }
 async function resetAll() {
   if (!confirm('Delete everything? This cannot be undone.')) return;
@@ -1303,8 +1311,8 @@ async function resetAll() {
     await loadData();
     renderAdmin();
     renderSDR();
-    toast('All data deleted');
-  } catch(e) { toast('Error resetting data'); }
+    toast('All data deleted', 'deleted');
+  } catch(e) { toast('Error resetting data', 'error'); }
 }
 
 // ══════════════════════════════════════════
@@ -1562,7 +1570,7 @@ function renderProductList() {
 }
 async function addProduct() {
   const name = document.getElementById('newProductName').value.trim();
-  if (!name) return toast('Enter a product name');
+  if (!name) return toast('Enter a product name', 'error');
   const id = uid();
   try {
     await db('products', 'POST', { id, name, sort_order: data.products.length });
@@ -1570,8 +1578,8 @@ async function addProduct() {
     await loadData();
     renderProductList();
     populateSelects();
-    toast('Product added');
-  } catch(e) { toast('Error adding product'); }
+    toast('Product added', 'success');
+  } catch(e) { toast('Error adding product', 'error'); }
 }
 async function deleteProduct(pid) {
   const prod = data.products.find(p => p.id === pid);
@@ -1583,8 +1591,8 @@ async function deleteProduct(pid) {
     await loadData();
     renderAdmin();
     renderSDR();
-    toast('Product deleted');
-  } catch(e) { toast('Error deleting product'); }
+    toast('Product deleted', 'deleted');
+  } catch(e) { toast('Error deleting product', 'error'); }
 }
 
 // TRACKS
@@ -1617,7 +1625,7 @@ async function saveTrack() {
   const title = document.getElementById('trackTitle').value.trim();
   const body  = document.getElementById('trackBody').value.trim();
   const eid   = document.getElementById('trackEditId').value;
-  if (!title || !body) return toast('Fill in all fields');
+  if (!title || !body) return toast('Fill in all fields', 'error');
   try {
     if (eid) {
       await db('tracks', 'PATCH', { product_id: pid, title, body }, `?id=eq.${eid}`);
@@ -1628,8 +1636,8 @@ async function saveTrack() {
     clearTrackForm();
     renderTrackList();
     renderSDR();
-    toast('Talk track saved');
-  } catch(e) { toast('Error saving talk track'); }
+    toast(eid ? 'Talk track updated' : 'Talk track saved', 'success');
+  } catch(e) { toast('Error saving talk track', 'error'); }
 }
 function editTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
@@ -1659,8 +1667,8 @@ async function deleteTrack(tid) {
     await loadData();
     renderTrackList();
     renderSDR();
-    toast('Deleted');
-  } catch(e) { toast('Error deleting track'); }
+    toast('Talk track deleted', 'deleted');
+  } catch(e) { toast('Error deleting track', 'error'); }
 }
 
 // OBJECTIONS (admin list uses different element to avoid conflict with SDR panel)
@@ -1697,7 +1705,7 @@ async function saveObj() {
   const text = document.getElementById('objText').value.trim();
   const resp = document.getElementById('objResponse').value.trim();
   const eid  = document.getElementById('objEditId').value;
-  if (!text || !resp) return toast('Fill in all fields');
+  if (!text || !resp) return toast('Fill in all fields', 'error');
   try {
     if (eid) {
       await db('objections', 'PATCH', { product_id: pid, text, response: resp }, `?id=eq.${eid}`);
@@ -1708,8 +1716,8 @@ async function saveObj() {
     clearObjForm();
     renderAdminObjList();
     renderSDR();
-    toast('Objection saved');
-  } catch(e) { toast('Error saving objection'); }
+    toast(eid ? 'Objection updated' : 'Objection saved', 'success');
+  } catch(e) { toast('Error saving objection', 'error'); }
 }
 function editObj(oid) {
   const o = data.objections.find(o => o.id === oid);
@@ -1739,8 +1747,8 @@ async function deleteObj(oid) {
     await loadData();
     renderAdminObjList();
     renderSDR();
-    toast('Deleted');
-  } catch(e) { toast('Error deleting objection'); }
+    toast('Objection deleted', 'deleted');
+  } catch(e) { toast('Error deleting objection', 'error'); }
 }
 
 // ── EXPORT / IMPORT ───────────────────────
@@ -1757,7 +1765,7 @@ async function importData(e) {
   try {
     const raw = await file.text();
     const imported = JSON.parse(raw);
-    if (!imported.products || !imported.tracks || !imported.objections) return toast('Invalid file format');
+    if (!imported.products || !imported.tracks || !imported.objections) return toast('Invalid file format', 'error');
     await db('objections', 'DELETE', null, '?id=neq.none');
     await db('tracks',     'DELETE', null, '?id=neq.none');
     await db('products',   'DELETE', null, '?id=neq.none');
@@ -1767,8 +1775,8 @@ async function importData(e) {
     await loadData();
     renderAdmin();
     renderSDR();
-    toast('Import complete');
-  } catch(err) { toast('Import failed — check file format'); }
+    toast('Import complete', 'success');
+  } catch(err) { toast('Import failed — check file format', 'error'); }
 }
 
 // ── INIT ──────────────────────────────────
