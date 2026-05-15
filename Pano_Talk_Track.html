@@ -173,25 +173,63 @@
   .track-panel {
     grid-column: 1;
     grid-row: 1 / 3;
-    overflow-y: auto;
-    padding: 0;
+    overflow: hidden;
+    display: flex;
     border-right: 1px solid var(--border);
     background: #ffffff;
   }
-  .track-panel-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #ffffff;
-    padding: 28px 40px 14px;
-    border-bottom: 2px solid var(--border);
+
+  /* Card list column */
+  .track-card-list {
+    width: 220px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 20px 12px;
+    background: #f7f8fa;
   }
+  .track-card-list::-webkit-scrollbar { width: 4px; }
+  .track-card-list::-webkit-scrollbar-track { background: transparent; }
+  .track-card-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Card nav item */
+  .track-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    background: var(--surface);
+    border-color: var(--border);
+  }
+  .track-nav-item:hover { border-color: var(--accent); background: var(--accent-dim2); }
+  .track-nav-item.active { border-color: var(--accent); background: var(--accent-dim); }
+  .track-nav-item.active .track-nav-label { color: var(--accent); font-weight: 700; }
+  .track-nav-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Content pane */
+  .track-content-pane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 40px 60px;
+  }
+  .track-content-pane::-webkit-scrollbar { width: 5px; }
+  .track-content-pane::-webkit-scrollbar-track { background: transparent; }
+  .track-content-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
   .track-panel-content {
     padding: 28px 40px 60px;
   }
-  .track-panel::-webkit-scrollbar { width: 5px; }
-  .track-panel::-webkit-scrollbar-track { background: transparent; }
-  .track-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
   /* Section headers */
   .track-section-header {
@@ -559,11 +597,23 @@
       overflow: visible;
     }
     .track-panel {
+      flex-direction: column;
       border-right: none;
       border-bottom: 1px solid var(--border);
-      overflow-y: visible;
-      padding: 20px 16px 32px;
+      height: auto;
+      overflow: visible;
     }
+    .track-card-list {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 12px;
+    }
+    .track-nav-item { margin-bottom: 0; }
+    .track-content-pane { padding: 20px 16px 32px; }
     .obj-panel {
       display: block;
       overflow: visible;
@@ -1450,40 +1500,41 @@ function renderTrackPanel(pid) {
     return;
   }
 
-  const stageColors = ['stage-color-0','stage-color-1','stage-color-2','stage-color-3','stage-color-4'];
-  const dotColors   = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
+  const dotColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
+  const borderColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
 
-  let sectionsHtml = '';
-  tracks.forEach((t, i) => {
-    const cc  = stageColors[Math.min(i, stageColors.length - 1)];
+  // Left: card nav list
+  const navHtml = tracks.map((t, i) => {
     const dot = dotColors[Math.min(i, dotColors.length - 1)];
-    sectionsHtml += `
-      <div class="track-section ${cc}" id="stage-${t.id}" style="padding:0;cursor:pointer;" onclick="toggleTrackSection('${t.id}')">
-        <div style="display:flex;align-items:center;gap:12px;padding:18px 24px;">
-          <div class="track-stage-dot" style="background:${dot};flex-shrink:0;"></div>
-          <div class="track-stage-label" style="flex:1;">${escHtml(t.title)}</div>
-          <span id="track-chevron-${t.id}" style="font-size:11px;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;">▼</span>
-        </div>
-        <div id="track-body-${t.id}" style="display:none;padding:0 24px 22px;border-top:1px solid var(--border);">
-          <div class="track-text" style="padding-top:18px;">${escHtml(t.body)}</div>
-        </div>
-      </div>`;
-  });
+    return `<div class="track-nav-item${i === 0 ? ' active' : ''}" id="track-nav-${t.id}" onclick="selectTrackSection('${t.id}')">
+      <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
+      <span class="track-nav-label">${escHtml(t.title)}</span>
+    </div>`;
+  }).join('');
 
-  el.innerHTML = `<div class="track-panel-content" style="padding-top:28px;">${sectionsHtml}</div>`;
+  // Right: content panes (only first visible)
+  const contentHtml = tracks.map((t, i) => {
+    const borderColor = borderColors[Math.min(i, borderColors.length - 1)];
+    return `<div id="track-content-${t.id}" style="display:${i === 0 ? 'block' : 'none'};">
+      <div style="border-left:4px solid ${borderColor};padding-left:20px;margin-bottom:8px;">
+        <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${borderColor};margin-bottom:6px;">${escHtml(t.title)}</div>
+      </div>
+      <div class="track-text">${escHtml(t.body)}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="track-card-list">${navHtml}</div>
+    <div class="track-content-pane">${contentHtml}</div>`;
 }
 
-function toggleTrackSection(tid) {
-  const body    = document.getElementById('track-body-' + tid);
-  const chevron = document.getElementById('track-chevron-' + tid);
-  const isOpen  = body.style.display !== 'none';
-  document.querySelectorAll('[id^="track-body-"]').forEach(el => el.style.display = 'none');
-  document.querySelectorAll('[id^="track-chevron-"]').forEach(el => { el.style.transform = ''; el.style.color = 'var(--text-muted)'; });
-  if (!isOpen) {
-    body.style.display = 'block';
-    chevron.style.transform = 'rotate(180deg)';
-    chevron.style.color = 'var(--accent)';
-  }
+function selectTrackSection(tid) {
+  document.querySelectorAll('.track-nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('[id^="track-content-"]').forEach(el => el.style.display = 'none');
+  const nav = document.getElementById('track-nav-' + tid);
+  const content = document.getElementById('track-content-' + tid);
+  if (nav) nav.classList.add('active');
+  if (content) content.style.display = 'block';
 }
 
 // ── Right panel: objections ────────────────
