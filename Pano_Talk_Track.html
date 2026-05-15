@@ -317,13 +317,46 @@
     font-size: 18px;
     line-height: 2.05;
     color: var(--text);
-    white-space: pre-wrap;
     font-family: var(--sans);
     font-weight: 400;
     letter-spacing: -0.01em;
     padding: 0 4px;
+    white-space: normal;
   }
   .track-text .hl { font-weight: 600; }
+  .track-text ul { padding-left: 1.4em; margin: 6px 0; }
+  .track-text li { margin-bottom: 4px; }
+  .obj-answer ul { padding-left: 1.4em; margin: 6px 0; }
+  .obj-answer li { margin-bottom: 4px; }
+
+  /* ── Markdown toolbar ── */
+  .md-toolbar {
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .md-toolbar button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.12s;
+    line-height: 1.4;
+  }
+  .md-toolbar button:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .md-toolbar-area {
+    border-radius: 0 0 var(--radius) var(--radius) !important;
+    border-top: none !important;
+  }
 
   /* ── Stage color themes (by order) ── */
   .stage-color-0 .track-stage-dot   { background: #22c55e; }
@@ -1042,7 +1075,13 @@
             </div>
             <div class="form-group">
               <label>Script (exactly what to say)</label>
-              <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…"></textarea>
+              <div class="md-toolbar">
+                <button type="button" onclick="mdWrap('trackBody','**','**')" title="Bold"><b>B</b></button>
+                <button type="button" onclick="mdWrap('trackBody','*','*')" title="Italic"><i>I</i></button>
+                <button type="button" onclick="mdWrap('trackBody','__','__')" title="Underline"><u>U</u></button>
+                <button type="button" onclick="mdBullet('trackBody')" title="Bullet">• List</button>
+              </div>
+              <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…" class="md-toolbar-area"></textarea>
             </div>
             <input type="hidden" id="trackEditId">
             <div class="btn-row">
@@ -1083,7 +1122,13 @@
             </div>
             <div class="form-group">
               <label>Your Response / Guideline</label>
-              <textarea id="objResponse" rows="8" placeholder="Acknowledge + pivot: 'That makes sense…'"></textarea>
+              <div class="md-toolbar">
+                <button type="button" onclick="mdWrap('objResponse','**','**')" title="Bold"><b>B</b></button>
+                <button type="button" onclick="mdWrap('objResponse','*','*')" title="Italic"><i>I</i></button>
+                <button type="button" onclick="mdWrap('objResponse','__','__')" title="Underline"><u>U</u></button>
+                <button type="button" onclick="mdBullet('objResponse')" title="Bullet">• List</button>
+              </div>
+              <textarea id="objResponse" rows="8" placeholder="Acknowledge + pivot: 'That makes sense…'" class="md-toolbar-area"></textarea>
             </div>
             <input type="hidden" id="objEditId">
             <div class="btn-row">
@@ -1237,6 +1282,50 @@ function toast(msg, type = 'neutral') {
 
 function escHtml(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function mdToHtml(str) {
+  const lines = (str || '').split('\n');
+  const out = [];
+  let inList = false;
+  for (let raw of lines) {
+    const isBullet = /^[-*]\s+/.test(raw);
+    if (isBullet && !inList) { out.push('<ul>'); inList = true; }
+    if (!isBullet && inList) { out.push('</ul>'); inList = false; }
+    let line = escHtml(isBullet ? raw.replace(/^[-*]\s+/, '') : raw);
+    line = line
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+      .replace(/__(.+?)__/g,     '<span style="text-decoration:underline">$1</span>');
+    out.push(isBullet ? `<li>${line}</li>` : `<span style="display:block;min-height:1em">${line}</span>`);
+  }
+  if (inList) out.push('</ul>');
+  return out.join('');
+}
+
+function mdWrap(id, before, after) {
+  const ta = document.getElementById(id);
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.slice(start, end);
+  const replacement = before + (sel || 'text') + after;
+  ta.setRangeText(replacement, start, end, 'select');
+  if (!sel) {
+    ta.setSelectionRange(start + before.length, start + before.length + 4);
+  }
+  ta.focus();
+}
+
+function mdBullet(id) {
+  const ta = document.getElementById(id);
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const before = ta.value.slice(0, start);
+  const sel = ta.value.slice(start, end);
+  const after = ta.value.slice(end);
+  const needsNewline = before.length > 0 && !before.endsWith('\n');
+  const lines = (sel || 'Item').split('\n').map(l => '- ' + l).join('\n');
+  const insert = (needsNewline ? '\n' : '') + lines;
+  ta.setRangeText(insert, start, end, 'end');
+  ta.focus();
 }
 
 function showView(v) {
@@ -1449,7 +1538,7 @@ function renderTrackPanel(pid) {
   // Right: content panes (only first visible)
   const contentHtml = tracks.map((t, i) => {
     return `<div id="track-content-${t.id}" style="display:${i === 0 ? 'block' : 'none'};">
-      <div class="track-text">${escHtml(t.body)}</div>
+      <div class="track-text">${mdToHtml(t.body)}</div>
     </div>`;
   }).join('');
 
@@ -1489,7 +1578,7 @@ function buildObjList(objs) {
         <span class="obj-q">"${escHtml(o.text)}"</span>
         <span class="obj-chevron">▼</span>
       </div>
-      <div class="obj-answer" data-oid="${o.id}">${escHtml(o.response)}</div>
+      <div class="obj-answer" data-oid="${o.id}">${mdToHtml(o.response)}</div>
     </div>`).join('');
 }
 
