@@ -151,10 +151,20 @@
     border-color: #ffffff;
     color: #ffffff;
   }
+  .nav-dropdown-btn-prefix {
+    opacity: 0.65;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .nav-dropdown-btn-sep {
+    opacity: 0.4;
+    font-size: 12px;
+  }
   .nav-dropdown-chevron {
     font-size: 14px;
     opacity: 1;
     transition: transform 0.2s;
+    margin-left: 6px;
   }
   .nav-dropdown-btn.open .nav-dropdown-chevron { transform: rotate(180deg); }
 
@@ -1042,7 +1052,7 @@
     <div class="nav-divider"></div>
     <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
       <button class="nav-dropdown-btn" id="callPlaybookBtn">
-        Call Playbook <span class="nav-dropdown-chevron">▾</span>
+        <span class="nav-dropdown-btn-prefix">Call Playbook</span><span class="nav-dropdown-btn-sep"> · </span><span id="callPlaybookBtnLabel">—</span><span class="nav-dropdown-chevron">▾</span>
       </button>
       <div class="nav-dropdown-menu" id="productBar"></div>
     </div>
@@ -1550,8 +1560,8 @@ function renderSDR() {
 
   // Show first product
   activePid = data.products[0].id;
-  const nameEl = document.getElementById('activeProductName');
-  if (nameEl) nameEl.textContent = data.products[0].name;
+  const labelEl = document.getElementById('callPlaybookBtnLabel');
+  if (labelEl) labelEl.textContent = data.products[0].name;
   renderTrackPanel(activePid);
   renderObjPanel(activePid);
   populateRefStates();
@@ -1620,9 +1630,9 @@ function toggleRefState(row) {
 
 function switchProduct(pid) {
   activePid = pid;
-  const prod   = data.products.find(p => p.id === pid);
-  const nameEl = document.getElementById('activeProductName');
-  if (nameEl && prod) nameEl.textContent = prod.name;
+  const prod    = data.products.find(p => p.id === pid);
+  const labelEl = document.getElementById('callPlaybookBtnLabel');
+  if (labelEl && prod) labelEl.textContent = prod.name;
   const btn  = document.getElementById('callPlaybookBtn');
   const menu = document.getElementById('productBar');
   if (btn)  btn.classList.remove('open');
