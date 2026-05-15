@@ -627,6 +627,7 @@
   }
   .admin-tabs {
     display: flex;
+    align-items: center;
     gap: 4px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 28px;
@@ -1064,6 +1065,10 @@
       <button class="admin-tab" onclick="switchAdminTab('tracks')">Talk Tracks</button>
       <button class="admin-tab" onclick="switchAdminTab('objections')">Objections</button>
       <button class="admin-tab" onclick="switchAdminTab('settings')">Settings</button>
+      <div id="adminProductWrap" style="display:none;align-items:center;gap:8px;margin-left:auto;padding-bottom:1px;">
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Product:</span>
+        <select id="adminProductSelect" onchange="onAdminProductChange()" style="font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;outline:none;cursor:pointer;"></select>
+      </div>
     </div>
 
     <!-- PRODUCTS PANEL -->
@@ -1097,11 +1102,7 @@
 
     <!-- TRACKS PANEL -->
     <div id="panel-tracks" class="admin-panel">
-      <div style="margin-bottom:20px;">
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Product</div>
-        <select id="trackProduct" onchange="renderTrackList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
-        <div class="section-title" style="margin-bottom:0;">Talk Tracks</div>
-      </div>
+      <div class="section-title">Talk Tracks</div>
 
       <!-- New Talk Track collapsible card -->
       <div class="new-entry-card" id="trackNewCard" onclick="expandNewCard('track')">
@@ -1139,11 +1140,7 @@
 
     <!-- OBJECTIONS PANEL -->
     <div id="panel-objections" class="admin-panel">
-      <div style="margin-bottom:20px;">
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Product</div>
-        <select id="objProduct" onchange="renderAdminObjList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
-        <div class="section-title" style="margin-bottom:0;">Objections & Responses</div>
-      </div>
+      <div class="section-title">Objections & Responses</div>
 
       <!-- New Objection collapsible card -->
       <div class="new-entry-card" id="objNewCard" onclick="expandNewCard('obj')">
@@ -1680,13 +1677,29 @@ function switchAdminTab(tab) {
   });
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
+  const wrap = document.getElementById('adminProductWrap');
+  const show = tab === 'tracks' || tab === 'objections';
+  wrap.style.display = show ? 'flex' : 'none';
+  if (show) {
+    if (tab === 'tracks') renderTrackList();
+    else renderAdminObjList();
+  }
+}
+
+function onAdminProductChange() {
+  const panels = document.querySelectorAll('.admin-panel.active');
+  const active = panels.length ? panels[0].id : '';
+  if (active === 'panel-tracks') renderTrackList();
+  else if (active === 'panel-objections') renderAdminObjList();
 }
 
 function populateSelects() {
-  ['trackProduct','objProduct'].forEach(id => {
-    const el = document.getElementById(id);
-    el.innerHTML = data.products.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('');
-  });
+  const opts = data.products.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('');
+  document.getElementById('adminProductSelect').innerHTML = opts;
+}
+
+function getAdminPid() {
+  return document.getElementById('adminProductSelect').value;
 }
 
 // PRODUCTS
@@ -1739,7 +1752,7 @@ async function deleteProduct(pid) {
 
 // TRACKS
 function renderTrackList() {
-  const pid  = document.getElementById('trackProduct').value;
+  const pid  = getAdminPid();
   const el   = document.getElementById('trackList');
   collapseNewCard('track', true);
   const list = data.tracks.filter(t => t.productId === pid);
@@ -1764,7 +1777,7 @@ function renderTrackList() {
     </div>`).join('');
 }
 async function saveTrack() {
-  const pid   = document.getElementById('trackProduct').value;
+  const pid   = getAdminPid();
   const title = document.getElementById('trackTitle').value.trim();
   const body  = document.getElementById('trackBody').value.trim();
   const eid   = document.getElementById('trackEditId').value;
@@ -1817,7 +1830,7 @@ function collapseNewCard(type, resetFields) {
 function editTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
   if (!t) return;
-  document.getElementById('trackProduct').value  = t.productId;
+  document.getElementById('adminProductSelect').value = t.productId;
   document.getElementById('trackTitle').value    = t.title;
   document.getElementById('trackBody').value     = t.body;
   document.getElementById('trackEditId').value   = tid;
@@ -1846,7 +1859,7 @@ async function deleteTrack(tid) {
 
 // OBJECTIONS (admin list uses different element to avoid conflict with SDR panel)
 function renderAdminObjList() {
-  const pid  = document.getElementById('objProduct').value;
+  const pid  = getAdminPid();
   const el   = document.getElementById('objList-admin');
   const countEl = document.getElementById('objAdminCount');
   collapseNewCard('obj', true);
@@ -1875,7 +1888,7 @@ function renderAdminObjList() {
 function renderObjList() { renderAdminObjList(); }
 
 async function saveObj() {
-  const pid  = document.getElementById('objProduct').value;
+  const pid  = getAdminPid();
   const text = document.getElementById('objText').value.trim();
   const resp = document.getElementById('objResponse').value.trim();
   const eid  = document.getElementById('objEditId').value;
@@ -1896,7 +1909,7 @@ async function saveObj() {
 function editObj(oid) {
   const o = data.objections.find(o => o.id === oid);
   if (!o) return;
-  document.getElementById('objProduct').value   = o.productId;
+  document.getElementById('adminProductSelect').value = o.productId;
   document.getElementById('objText').value      = o.text;
   document.getElementById('objResponse').value  = o.response;
   document.getElementById('objEditId').value    = oid;
