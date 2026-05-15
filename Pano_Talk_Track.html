@@ -123,45 +123,78 @@
      SDR VIEW — TWO COLUMN LAYOUT
   ══════════════════════════════════════════ */
 
-  /* Product tabs — inline in nav */
-  .product-bar {
+  /* ── PRODUCT SIDEBAR ── */
+  .product-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+    width: 36px;
+    background: #0d1b3e;
+    z-index: 100;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    flex: 1;
-    min-width: 0;
+    transition: width 0.2s ease;
+    overflow: hidden;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.18);
   }
-  .product-bar::-webkit-scrollbar { display: none; }
-  .product-tab {
-    padding: 0 22px;
-    height: 38px;
-    border: none;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.45);
+  .product-sidebar:hover {
+    width: 180px;
+  }
+  .product-sidebar-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
     font-family: var(--sans);
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 16px 0;
     white-space: nowrap;
-    transition: all 0.15s;
+    transition: opacity 0.15s;
     flex-shrink: 0;
+  }
+  .product-sidebar:hover .product-sidebar-label { opacity: 0; width: 0; padding: 0; overflow: hidden; }
+  .product-sidebar-items {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 12px 0;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.15s 0.05s;
+  }
+  .product-sidebar:hover .product-sidebar-items { opacity: 1; }
+  .product-tab {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 0;
+    text-align: left;
+    white-space: nowrap;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
     letter-spacing: 0.01em;
   }
   .product-tab:hover {
-    background: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
   }
   .product-tab.active {
     background: var(--accent);
     color: #ffffff;
-    font-weight: 600;
-    box-shadow: 0 0 12px rgba(0,169,157,0.5);
+    font-weight: 700;
   }
 
-  /* Two-column body */
+  /* Two-column body — offset left for sidebar */
   .sdr-body {
     display: grid;
     grid-template-columns: minmax(0, 38%) 1fr;
@@ -169,6 +202,7 @@
     height: calc(100vh - var(--nav-h));
     overflow: hidden;
     min-width: 0;
+    margin-left: 36px;
   }
 
   /* ── LEFT: Talk Track ── */
@@ -177,57 +211,54 @@
     grid-row: 1 / 3;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     min-width: 0;
     border-right: 1px solid var(--border);
     background: var(--surface);
   }
 
-  /* Card list column */
-  .track-card-list {
-    width: 30%;
-    min-width: 180px;
-    max-width: 220px;
+  /* Horizontal stage tab strip */
+  .track-stage-tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
     flex-shrink: 0;
-    overflow-y: auto;
-    border-right: 1px solid var(--border);
-    padding: 16px 10px;
+    border-bottom: 2px solid var(--border);
     background: var(--bg);
+    padding: 0 8px;
   }
-  .track-card-list::-webkit-scrollbar { width: 4px; }
-  .track-card-list::-webkit-scrollbar-track { background: transparent; }
-  .track-card-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  /* Card nav item */
+  .track-stage-tabs::-webkit-scrollbar { display: none; }
   .track-nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 18px;
-    border-radius: 10px;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
     cursor: pointer;
-    margin-bottom: 8px;
-    border: 1.5px solid var(--border);
+    background: none;
+    white-space: nowrap;
     transition: all 0.15s;
-    background: var(--surface);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    flex-shrink: 0;
   }
-  .track-nav-item:hover { border-color: var(--accent); background: var(--accent-dim2); box-shadow: 0 3px 10px rgba(0,169,157,0.1); }
-  .track-nav-item.active { border-color: var(--accent); background: var(--accent-dim); box-shadow: 0 3px 10px rgba(0,169,157,0.15); }
+  .track-nav-item:hover { background: var(--accent-dim2); }
+  .track-nav-item.active { border-bottom-color: var(--accent); background: var(--accent-dim); }
   .track-nav-item.active .track-nav-label { color: var(--accent); font-weight: 700; }
   .track-nav-label {
     font-family: var(--sans);
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--text);
+    color: var(--text-dim);
     line-height: 1.3;
   }
 
-  /* Content pane */
+  /* Content pane — now full width below tabs */
   .track-content-pane {
     flex: 1;
     min-width: 0;
     overflow-y: auto;
-    padding: 32px clamp(16px, 3vw, 40px) 60px;
+    padding: 28px clamp(16px, 3vw, 40px) 60px;
   }
   .track-content-pane::-webkit-scrollbar { width: 5px; }
   .track-content-pane::-webkit-scrollbar-track { background: transparent; }
@@ -580,10 +611,12 @@
 
   /* ── MOBILE ── */
   @media (max-width: 768px) {
+    .product-sidebar { display: none !important; }
     .sdr-body {
       display: block;
       height: auto;
       overflow: visible;
+      margin-left: 0;
     }
     .track-panel {
       flex-direction: column;
@@ -592,16 +625,13 @@
       height: auto;
       overflow: visible;
     }
-    .track-card-list {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      display: flex;
+    .track-stage-tabs {
       flex-wrap: wrap;
-      gap: 6px;
-      padding: 12px;
+      padding: 8px;
+      gap: 4px;
     }
-    .track-nav-item { margin-bottom: 0; }
+    .track-nav-item { border-bottom: none; border-radius: 6px; border: 1.5px solid var(--border); margin-bottom: 0; }
+    .track-nav-item.active { border-color: var(--accent); }
     .track-content-pane { padding: 20px 16px 32px; }
     .obj-panel {
       display: block;
@@ -985,8 +1015,6 @@
       <span class="sep">|</span>
       <span class="sub">Call Playbook</span>
     </div>
-    <div class="nav-divider"></div>
-    <div class="product-bar" id="productBar"></div>
   </div>
   <div class="nav-actions" id="navActions">
     <button class="btn-ghost" id="backBtn" onclick="showView('sdr')" style="display:none">← Cheat Sheet</button>
@@ -996,6 +1024,12 @@
 
 <!-- ═══════════ SDR VIEW ═══════════ -->
 <div id="view-sdr" class="view active">
+
+  <!-- Product sidebar -->
+  <div class="product-sidebar" id="productSidebar">
+    <div class="product-sidebar-label">Products</div>
+    <div class="product-sidebar-items" id="productBar"></div>
+  </div>
 
   <!-- Two-column body -->
   <div class="sdr-body">
@@ -1383,29 +1417,25 @@ function mdBullet(id) {
 function showView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
-  const adminBtn   = document.getElementById('adminNavBtn');
-  const backBtn    = document.getElementById('backBtn');
-  const productBar = document.getElementById('productBar');
-  const navDivider = productBar ? productBar.previousElementSibling : null;
+  const adminBtn  = document.getElementById('adminNavBtn');
+  const backBtn   = document.getElementById('backBtn');
+  const sidebar   = document.getElementById('productSidebar');
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
     adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
-    if (productBar) productBar.style.display = 'none';
-    if (navDivider) navDivider.style.display = 'none';
+    if (sidebar) sidebar.style.display = 'none';
   } else if (v === 'sdr') {
     adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
-    if (productBar) productBar.style.display = 'flex';
-    if (navDivider) navDivider.style.display = 'block';
+    if (sidebar) sidebar.style.display = 'flex';
     renderSDR();
   } else {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
-    if (productBar) productBar.style.display = 'none';
-    if (navDivider) navDivider.style.display = 'none';
+    if (sidebar) sidebar.style.display = 'none';
   }
 }
 
@@ -1578,16 +1608,16 @@ function renderTrackPanel(pid) {
   const dotColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
   const borderColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
 
-  // Left: card nav list
+  // Top: horizontal stage tab strip
   const navHtml = tracks.map((t, i) => {
     const dot = dotColors[Math.min(i, dotColors.length - 1)];
     return `<div class="track-nav-item${i === 0 ? ' active' : ''}" id="track-nav-${t.id}" onclick="selectTrackSection('${t.id}')">
-      <div style="width:13px;height:13px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
+      <div style="width:9px;height:9px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
       <span class="track-nav-label">${escHtml(t.title)}</span>
     </div>`;
   }).join('');
 
-  // Right: content panes (only first visible)
+  // Below: content pane (only first visible)
   const contentHtml = tracks.map((t, i) => {
     return `<div id="track-content-${t.id}" style="display:${i === 0 ? 'block' : 'none'};">
       <div class="track-text">${mdToHtml(t.body)}</div>
@@ -1595,7 +1625,7 @@ function renderTrackPanel(pid) {
   }).join('');
 
   el.innerHTML = `
-    <div class="track-card-list">${navHtml}</div>
+    <div class="track-stage-tabs">${navHtml}</div>
     <div class="track-content-pane">${contentHtml}</div>`;
 }
 
