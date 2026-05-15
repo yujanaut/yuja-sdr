@@ -1114,17 +1114,19 @@
 
     <!-- TRACKS PANEL -->
     <div id="panel-tracks" class="admin-panel">
-      <div class="section-title">Talk Tracks</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="section-title" style="margin-bottom:0;">Talk Tracks</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin:0;">Product</label>
+          <select id="trackProduct" onchange="renderTrackList()" style="font-family:var(--sans);font-size:14px;font-weight:600;color:var(--text);background:var(--surface);border:1.5px solid var(--accent);border-radius:var(--radius);padding:7px 14px;outline:none;cursor:pointer;min-width:180px;"></select>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px;align-items:start;">
 
         <!-- LEFT: Form (always visible) -->
         <div style="position:sticky;top:20px;">
           <div class="inline-form" style="margin-bottom:0;">
             <div class="form-title" id="trackFormTitle">+ New Talk Track</div>
-            <div class="form-group">
-              <label>Product</label>
-              <select id="trackProduct" onchange="renderTrackList()"></select>
-            </div>
             <div class="form-group">
               <label>Stage Label</label>
               <input type="text" id="trackTitle" placeholder="e.g. Opener">
