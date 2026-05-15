@@ -1741,12 +1741,7 @@ async function deleteProduct(pid) {
 function renderTrackList() {
   const pid  = document.getElementById('trackProduct').value;
   const el   = document.getElementById('trackList');
-  collapseNewCard('track');
-  document.getElementById('trackTitle').value  = '';
-  document.getElementById('trackBody').value   = '';
-  document.getElementById('trackEditId').value = '';
-  document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
-  document.querySelectorAll('[id^="admin-track-card-"]').forEach(c => c.style.borderColor = '');
+  collapseNewCard('track', true);
   const list = data.tracks.filter(t => t.productId === pid);
   if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
   const countEl = document.getElementById('trackCount');
@@ -1791,15 +1786,33 @@ function expandNewCard(type) {
   const card = document.getElementById(type + 'NewCard');
   const body = document.getElementById(type + 'NewBody');
   const isOpen = card.classList.contains('open');
-  if (isOpen) return; // already open — don't collapse while editing
-  card.classList.add('open');
-  body.classList.add('open');
+  if (isOpen) {
+    collapseNewCard(type);
+  } else {
+    card.classList.add('open');
+    body.classList.add('open');
+  }
 }
-function collapseNewCard(type) {
+function collapseNewCard(type, resetFields) {
   const card = document.getElementById(type + 'NewCard');
   const body = document.getElementById(type + 'NewBody');
   card.classList.remove('open');
   body.classList.remove('open');
+  if (resetFields) {
+    if (type === 'track') {
+      document.getElementById('trackTitle').value  = '';
+      document.getElementById('trackBody').value   = '';
+      document.getElementById('trackEditId').value = '';
+      document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
+      document.querySelectorAll('[id^="admin-track-card-"]').forEach(c => c.style.borderColor = '');
+    } else {
+      document.getElementById('objText').value     = '';
+      document.getElementById('objResponse').value = '';
+      document.getElementById('objEditId').value   = '';
+      document.getElementById('objFormTitle').textContent = '+ New Objection';
+      document.querySelectorAll('[id^="admin-obj-card-"]').forEach(c => c.style.borderColor = '');
+    }
+  }
 }
 function editTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
@@ -1812,16 +1825,12 @@ function editTrack(tid) {
   document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
   const card = document.getElementById('admin-track-card-' + tid);
   if (card) card.style.borderColor = 'var(--accent)';
-  expandNewCard('track');
+  document.getElementById('trackNewCard').classList.add('open');
+  document.getElementById('trackNewBody').classList.add('open');
   document.getElementById('trackNewCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearTrackForm() {
-  document.getElementById('trackTitle').value  = '';
-  document.getElementById('trackBody').value   = '';
-  document.getElementById('trackEditId').value = '';
-  document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
-  document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
-  collapseNewCard('track');
+  collapseNewCard('track', true);
 }
 async function deleteTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
@@ -1840,12 +1849,7 @@ function renderAdminObjList() {
   const pid  = document.getElementById('objProduct').value;
   const el   = document.getElementById('objList-admin');
   const countEl = document.getElementById('objAdminCount');
-  collapseNewCard('obj');
-  document.getElementById('objText').value     = '';
-  document.getElementById('objResponse').value = '';
-  document.getElementById('objEditId').value   = '';
-  document.getElementById('objFormTitle').textContent = '+ New Objection';
-  document.querySelectorAll('[id^="admin-obj-card-"]').forEach(c => c.style.borderColor = '');
+  collapseNewCard('obj', true);
   const list = data.objections.filter(o => o.productId === pid);
   if (!list.length) {
     el.innerHTML = '<div class="empty-state" style="padding:20px 0">No objections for this product.</div>';
@@ -1900,16 +1904,12 @@ function editObj(oid) {
   document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
   const card = document.getElementById('admin-obj-card-' + oid);
   if (card) card.style.borderColor = 'var(--accent)';
-  expandNewCard('obj');
+  document.getElementById('objNewCard').classList.add('open');
+  document.getElementById('objNewBody').classList.add('open');
   document.getElementById('objNewCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearObjForm() {
-  document.getElementById('objText').value     = '';
-  document.getElementById('objResponse').value = '';
-  document.getElementById('objEditId').value   = '';
-  document.getElementById('objFormTitle').textContent = '+ New Objection';
-  document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
-  collapseNewCard('obj');
+  collapseNewCard('obj', true);
 }
 async function deleteObj(oid) {
   const obj = data.objections.find(o => o.id === oid);
