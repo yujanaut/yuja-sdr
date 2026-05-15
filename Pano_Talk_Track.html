@@ -1327,21 +1327,29 @@ function escHtml(str) {
 function showView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
-  const adminBtn = document.getElementById('adminNavBtn');
-  const backBtn  = document.getElementById('backBtn');
+  const adminBtn   = document.getElementById('adminNavBtn');
+  const backBtn    = document.getElementById('backBtn');
+  const productBar = document.getElementById('productBar');
+  const navDivider = productBar ? productBar.previousElementSibling : null;
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
     adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
+    if (productBar) productBar.style.display = 'none';
+    if (navDivider) navDivider.style.display = 'none';
   } else if (v === 'sdr') {
     adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
+    if (productBar) productBar.style.display = 'flex';
+    if (navDivider) navDivider.style.display = 'block';
     renderSDR();
   } else {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
+    if (productBar) productBar.style.display = 'none';
+    if (navDivider) navDivider.style.display = 'none';
   }
 }
 
