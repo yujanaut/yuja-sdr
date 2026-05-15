@@ -78,7 +78,7 @@
     width: auto;
     display: block;
   }
-  .nav-brand .sep { color: #4b5563; margin: 0 10px; font-weight: 300; font-size: 20px; }
+  .nav-brand .sep { color: #9ca3af; margin: 0 10px; font-weight: 300; font-size: 20px; }
   .nav-brand .sub { color: #d1d5db; font-size: 18px; font-weight: 500; font-family: var(--sans); letter-spacing: 0; }
   .nav-divider {
     width: 1px;
@@ -89,8 +89,8 @@
   .nav-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn-ghost {
     background: none;
-    border: 1px solid #6b7280;
-    color: #d1d5db;
+    border: 1px solid #9ca3af;
+    color: #f3f4f6;
     padding: 5px 12px;
     border-radius: var(--radius);
     font-family: var(--sans);
@@ -177,7 +177,7 @@
     text-align: left;
     white-space: nowrap;
     background: transparent;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.75);
     font-family: var(--sans);
     font-size: 13px;
     font-weight: 600;
@@ -186,8 +186,8 @@
     letter-spacing: 0.01em;
   }
   .product-tab:hover {
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
   }
   .product-tab.active {
     background: var(--accent);
@@ -382,6 +382,22 @@
   .obj-answer ul { padding-left: 1.4em; margin: 6px 0; }
   .obj-answer li { margin-bottom: 4px; }
 
+  /* Coaching notes — italic *text* rendered as em */
+  .track-stage-body em,
+  .obj-answer em {
+    font-style: normal;
+    font-size: 0.88em;
+    color: #0e7a72;
+    background: rgba(0,169,157,0.08);
+    border-left: 3px solid var(--accent);
+    display: block;
+    padding: 5px 10px;
+    margin: 8px 0;
+    border-radius: 0 5px 5px 0;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
   /* ── Markdown toolbar ── */
   .md-toolbar {
     display: flex;
@@ -440,31 +456,31 @@
   /* ── PANEL MODE TOGGLE ── */
   .panel-mode-tabs {
     display: flex;
-    gap: 8px;
-    padding: 12px 14px 0;
+    gap: 6px;
+    padding: 10px 12px 0;
     border-bottom: 2px solid var(--border);
-    background: var(--surface);
+    background: #1e2d50;
     flex-shrink: 0;
   }
   .panel-mode-tab {
     flex: 1;
-    padding: 10px 10px 11px;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
+    padding: 9px 10px 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
     border-bottom: none;
-    border-radius: 8px 8px 0 0;
+    border-radius: 7px 7px 0 0;
     font-family: var(--sans);
-    font-size: 13.5px;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--text-muted);
+    color: rgba(255,255,255,0.7);
     cursor: pointer;
     transition: all 0.15s;
-    letter-spacing: 0;
+    letter-spacing: 0.01em;
     white-space: nowrap;
     text-align: center;
     margin-bottom: -2px;
   }
-  .panel-mode-tab:hover { color: var(--text); background: #e2e8f0; }
+  .panel-mode-tab:hover { color: #ffffff; background: rgba(255,255,255,0.15); }
   .panel-mode-tab.active {
     background: var(--surface);
     color: var(--accent);
