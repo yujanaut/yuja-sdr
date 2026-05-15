@@ -1284,33 +1284,50 @@ function escHtml(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function mdInline(line) {
+  // Bold before italic so **bold *italic* bold** parses correctly.
+  // Require non-space at start/end of match to avoid lone * or __ in text.
+  return line
+    .replace(/\*\*(\S(?:[^*]*\S)?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(\S(?:[^*]*\S)?)\*/g,     '<em>$1</em>')
+    .replace(/__(\S(?:[^_]*\S)?)__/g,     '<span style="text-decoration:underline">$1</span>');
+}
+
 function mdToHtml(str) {
   const lines = (str || '').split('\n');
   const out = [];
   let inList = false;
-  for (let raw of lines) {
-    const isBullet = /^[-*]\s+/.test(raw);
+  for (const raw of lines) {
+    const isBullet = /^-\s/.test(raw);
     if (isBullet && !inList) { out.push('<ul>'); inList = true; }
     if (!isBullet && inList) { out.push('</ul>'); inList = false; }
-    let line = escHtml(isBullet ? raw.replace(/^[-*]\s+/, '') : raw);
-    line = line
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
-      .replace(/__(.+?)__/g,     '<span style="text-decoration:underline">$1</span>');
-    out.push(isBullet ? `<li>${line}</li>` : `<span style="display:block;min-height:1em">${line}</span>`);
+    const text = mdInline(escHtml(isBullet ? raw.slice(2) : raw));
+    out.push(isBullet ? `<li>${text}</li>` : `<span style="display:block;min-height:1em">${text}</span>`);
   }
   if (inList) out.push('</ul>');
   return out.join('');
+}
+
+function mdStrip(str) {
+  return (str || '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g,     '$1')
+    .replace(/__(.+?)__/g,     '$1')
+    .replace(/^-\s/gm,         '');
 }
 
 function mdWrap(id, before, after) {
   const ta = document.getElementById(id);
   const start = ta.selectionStart, end = ta.selectionEnd;
   const sel = ta.value.slice(start, end);
-  const replacement = before + (sel || 'text') + after;
-  ta.setRangeText(replacement, start, end, 'select');
-  if (!sel) {
-    ta.setSelectionRange(start + before.length, start + before.length + 4);
+  // Toggle: if selection is already wrapped, unwrap it
+  if (sel.startsWith(before) && sel.endsWith(after)) {
+    const inner = sel.slice(before.length, sel.length - after.length);
+    ta.setRangeText(inner, start, end, 'select');
+  } else {
+    const replacement = before + (sel || 'text') + after;
+    ta.setRangeText(replacement, start, end, 'select');
+    if (!sel) ta.setSelectionRange(start + before.length, start + before.length + 4);
   }
   ta.focus();
 }
@@ -1318,12 +1335,15 @@ function mdWrap(id, before, after) {
 function mdBullet(id) {
   const ta = document.getElementById(id);
   const start = ta.selectionStart, end = ta.selectionEnd;
-  const before = ta.value.slice(0, start);
-  const sel = ta.value.slice(start, end);
-  const after = ta.value.slice(end);
-  const needsNewline = before.length > 0 && !before.endsWith('\n');
-  const lines = (sel || 'Item').split('\n').map(l => '- ' + l).join('\n');
-  const insert = (needsNewline ? '\n' : '') + lines;
+  const sel = ta.value.slice(start, end) || 'Item';
+  const lines = sel.split('\n');
+  const allBullets = lines.every(l => /^-\s/.test(l));
+  // Toggle: if all lines are already bullets, remove them
+  const result = allBullets
+    ? lines.map(l => l.slice(2)).join('\n')
+    : lines.map(l => (/^-\s/.test(l) ? l : '- ' + l)).join('\n');
+  const needsNewline = start > 0 && ta.value[start - 1] !== '\n';
+  const insert = (needsNewline ? '\n' : '') + result;
   ta.setRangeText(insert, start, end, 'end');
   ta.focus();
 }
@@ -1699,7 +1719,7 @@ function renderTrackList() {
           <span style="font-family:var(--sans);font-size:10px;color:var(--text-muted);flex-shrink:0;">${i + 1}</span>
           <div style="min-width:0;">
             <div class="card-title" style="font-size:13px;">${escHtml(t.title)}</div>
-            <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(t.body.slice(0, 60))}…</div>
+            <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(mdStrip(t.body).slice(0, 60))}…</div>
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
@@ -1777,7 +1797,7 @@ function renderAdminObjList() {
       <div class="card-header" style="margin-bottom:0;">
         <div style="flex:1;min-width:0;">
           <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
-          <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(o.response.slice(0,60))}…</div>
+          <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(mdStrip(o.response).slice(0, 60))}…</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
           <button class="btn-edit" onclick="editObj('${o.id}')">Edit</button>
