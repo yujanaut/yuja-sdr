@@ -1979,7 +1979,13 @@ async function importData(e) {
 }
 
 // ── INIT ──────────────────────────────────
-loadData().then(() => renderSDR());
+loadData().then(() => {
+  const dropdown = document.getElementById('callPlaybookDropdown');
+  const divider  = dropdown ? dropdown.previousElementSibling : null;
+  if (dropdown) dropdown.style.display = 'block';
+  if (divider)  divider.style.display  = 'block';
+  renderSDR();
+});
 </script>
 </body>
 </html>
