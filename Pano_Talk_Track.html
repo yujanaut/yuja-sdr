@@ -1065,9 +1065,9 @@
 <div id="view-admin" class="view">
   <div class="admin-wrap">
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('products')">Product Lines</button>
-      <button class="admin-tab" onclick="switchAdminTab('tracks')">Talk Tracks</button>
+      <button class="admin-tab active" onclick="switchAdminTab('tracks')">Talk Tracks</button>
       <button class="admin-tab" onclick="switchAdminTab('objections')">Objections</button>
+      <button class="admin-tab" onclick="switchAdminTab('products')">Product Lines</button>
       <button class="admin-tab" onclick="switchAdminTab('settings')">Settings</button>
       <div id="adminProductWrap" style="display:none;align-items:center;gap:8px;margin-left:auto;">
         <span style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Product:</span>
@@ -1076,36 +1076,34 @@
     </div>
 
     <!-- PRODUCTS PANEL -->
-    <div id="panel-products" class="admin-panel active">
+    <div id="panel-products" class="admin-panel">
       <div class="section-title">Product Lines</div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
 
-        <!-- LEFT header -->
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">New Product Line</div>
-        <!-- RIGHT header -->
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Products <span id="productCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
-
-        <!-- LEFT: Add form -->
-        <div style="position:sticky;top:20px;">
-          <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-group">
-              <label>Product Name</label>
-              <input type="text" id="newProductName" placeholder="e.g. YuJa Verity">
-            </div>
+      <!-- New Product Line collapsible card -->
+      <div class="new-entry-card" id="productNewCard" onclick="expandNewCard('product')">
+        <span class="new-entry-label" id="productFormTitle">+ New Product Line</span>
+        <span class="new-entry-chevron" id="productNewChevron">▾</span>
+      </div>
+      <div class="new-entry-body" id="productNewBody">
+        <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="newProductName" placeholder="e.g. YuJa Verity">
+          </div>
+          <div class="btn-row">
             <button class="btn-primary" onclick="addProduct()">Add Product</button>
+            <button class="btn-secondary" onclick="collapseNewCard('product', true)">Cancel</button>
           </div>
         </div>
-
-        <!-- RIGHT: Product list -->
-        <div>
-          <div id="productList"></div>
-        </div>
-
       </div>
+
+      <!-- Existing list -->
+      <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin:20px 0 10px;">Existing Products <span id="productCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+      <div id="productList"></div>
     </div>
 
     <!-- TRACKS PANEL -->
-    <div id="panel-tracks" class="admin-panel">
+    <div id="panel-tracks" class="admin-panel active">
       <div class="section-title">Talk Tracks</div>
 
       <!-- New Talk Track collapsible card -->
@@ -1671,11 +1669,13 @@ function filterObjs() {
 function renderAdmin() {
   renderProductList();
   populateSelects();
+  renderTrackList();
+  document.getElementById('adminProductWrap').style.display = 'flex';
 }
 
 function switchAdminTab(tab) {
   document.querySelectorAll('.admin-tab').forEach((b,i) => {
-    b.classList.toggle('active', ['products','tracks','objections','settings'][i] === tab);
+    b.classList.toggle('active', ['tracks','objections','products','settings'][i] === tab);
   });
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
@@ -1731,8 +1731,8 @@ async function addProduct() {
   const id = uid();
   try {
     await db('products', 'POST', { id, name, sort_order: data.products.length });
-    document.getElementById('newProductName').value = '';
     await loadData();
+    collapseNewCard('product', true);
     renderProductList();
     populateSelects();
     toast('Product added', 'success');
@@ -1821,12 +1821,14 @@ function collapseNewCard(type, resetFields) {
       document.getElementById('trackEditId').value = '';
       document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
       document.querySelectorAll('[id^="admin-track-card-"]').forEach(c => c.style.borderColor = '');
-    } else {
+    } else if (type === 'obj') {
       document.getElementById('objText').value     = '';
       document.getElementById('objResponse').value = '';
       document.getElementById('objEditId').value   = '';
       document.getElementById('objFormTitle').textContent = '+ New Objection';
       document.querySelectorAll('[id^="admin-obj-card-"]').forEach(c => c.style.borderColor = '');
+    } else if (type === 'product') {
+      document.getElementById('newProductName').value = '';
     }
   }
 }
