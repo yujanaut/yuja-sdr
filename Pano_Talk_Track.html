@@ -1029,14 +1029,26 @@
     <!-- PRODUCTS PANEL -->
     <div id="panel-products" class="admin-panel active">
       <div class="section-title">Product Lines</div>
-      <div id="productList"></div>
-      <div class="inline-form">
-        <div class="form-title">+ Add Product Line</div>
-        <div class="form-group">
-          <label>Product Name</label>
-          <input type="text" id="newProductName" placeholder="e.g. YuJa Video Platform">
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;">
+
+        <!-- LEFT: Add form -->
+        <div style="position:sticky;top:20px;">
+          <div class="inline-form" style="margin-bottom:0;">
+            <div class="form-title">+ New Product Line</div>
+            <div class="form-group">
+              <label>Product Name</label>
+              <input type="text" id="newProductName" placeholder="e.g. YuJa Verity">
+            </div>
+            <button class="btn-primary" onclick="addProduct()">Add Product</button>
+          </div>
         </div>
-        <button class="btn-primary" onclick="addProduct()">Add Product</button>
+
+        <!-- RIGHT: Product list -->
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Products <span id="productCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+          <div id="productList"></div>
+        </div>
+
       </div>
     </div>
 
@@ -1081,30 +1093,38 @@
     <!-- OBJECTIONS PANEL -->
     <div id="panel-objections" class="admin-panel">
       <div class="section-title">Objections & Responses</div>
-      <div class="form-group">
-        <label>Filter by Product</label>
-        <select id="objProductFilter" onchange="renderObjList()"></select>
-      </div>
-      <div id="objList-admin"></div>
-      <div class="inline-form">
-        <div class="form-title">+ Add / Edit Objection</div>
-        <div class="form-group">
-          <label>Product</label>
-          <select id="objProduct"></select>
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;">
+
+        <!-- LEFT: Form -->
+        <div style="position:sticky;top:20px;">
+          <div class="inline-form" style="margin-bottom:0;">
+            <div class="form-title" id="objFormTitle">+ New Objection</div>
+            <div class="form-group">
+              <label>Product</label>
+              <select id="objProduct" onchange="renderAdminObjList()"></select>
+            </div>
+            <div class="form-group">
+              <label>Objection (what the prospect says)</label>
+              <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
+            </div>
+            <div class="form-group">
+              <label>Your Response / Guideline</label>
+              <textarea id="objResponse" rows="8" placeholder="Acknowledge + pivot: 'That makes sense…'"></textarea>
+            </div>
+            <input type="hidden" id="objEditId">
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveObj()">Save Objection</button>
+              <button class="btn-secondary" onclick="clearObjForm()">Clear</button>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Objection (what the prospect says)</label>
-          <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
+
+        <!-- RIGHT: Objection list -->
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Objections <span id="objAdminCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+          <div id="objList-admin"></div>
         </div>
-        <div class="form-group">
-          <label>Your Response / Guideline</label>
-          <textarea id="objResponse" rows="5" placeholder="Acknowledge + pivot: 'That makes sense…'"></textarea>
-        </div>
-        <input type="hidden" id="objEditId">
-        <div class="btn-row">
-          <button class="btn-primary" onclick="saveObj()">Save Objection</button>
-          <button class="btn-secondary" onclick="clearObjForm()">Clear</button>
-        </div>
+
       </div>
     </div>
 
@@ -1540,7 +1560,7 @@ function switchAdminTab(tab) {
 }
 
 function populateSelects() {
-  ['trackProduct','objProductFilter','objProduct'].forEach(id => {
+  ['trackProduct','objProduct'].forEach(id => {
     const el = document.getElementById(id);
     el.innerHTML = data.products.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('');
   });
@@ -1549,12 +1569,18 @@ function populateSelects() {
 // PRODUCTS
 function renderProductList() {
   const el = document.getElementById('productList');
-  if (!data.products.length) { el.innerHTML = '<div class="empty-state">No products yet.</div>'; return; }
+  const countEl = document.getElementById('productCount');
+  if (!data.products.length) {
+    el.innerHTML = '<div class="empty-state">No products yet.</div>';
+    if (countEl) countEl.textContent = 0;
+    return;
+  }
+  if (countEl) countEl.textContent = data.products.length;
   el.innerHTML = data.products.map(p => `
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">${escHtml(p.name)}</div>
+    <div class="card" style="margin-bottom:8px;">
+      <div class="card-header" style="margin-bottom:0;">
+        <div style="flex:1;">
+          <div class="card-title" style="font-size:14px;">${escHtml(p.name)}</div>
           <div class="card-meta">${data.tracks.filter(t=>t.productId===p.id).length} tracks · ${data.objections.filter(o=>o.productId===p.id).length} objections</div>
         </div>
         <button class="btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
@@ -1663,19 +1689,24 @@ async function deleteTrack(tid) {
 
 // OBJECTIONS (admin list uses different element to avoid conflict with SDR panel)
 function renderAdminObjList() {
-  const pid  = document.getElementById('objProductFilter').value;
+  const pid  = document.getElementById('objProduct').value;
   const el   = document.getElementById('objList-admin');
+  const countEl = document.getElementById('objAdminCount');
   const list = data.objections.filter(o => o.productId === pid);
-  if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No objections for this product.</div>'; return; }
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:20px 0">No objections for this product.</div>';
+    if (countEl) countEl.textContent = 0;
+    return;
+  }
+  if (countEl) countEl.textContent = list.length;
   el.innerHTML = list.map(o => `
-    <div class="card">
-      <div class="card-header">
-        <div style="flex:1">
-          <div class="card-title">"${escHtml(o.text)}"</div>
-          <div class="card-meta">${escHtml(o.response.slice(0,80))}…</div>
+    <div class="card" id="admin-obj-card-${o.id}" style="margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;" onclick="editObj('${o.id}')">
+      <div class="card-header" style="margin-bottom:0;">
+        <div style="flex:1;min-width:0;">
+          <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
+          <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(o.response.slice(0,60))}…</div>
         </div>
-        <div style="display:flex;gap:6px">
-          <button class="btn-edit" onclick="editObj('${o.id}')">Edit</button>
+        <div style="display:flex;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
           <button class="btn-danger" onclick="deleteObj('${o.id}')">Delete</button>
         </div>
       </div>
@@ -1710,13 +1741,17 @@ function editObj(oid) {
   document.getElementById('objText').value      = o.text;
   document.getElementById('objResponse').value  = o.response;
   document.getElementById('objEditId').value    = oid;
-  document.querySelector('#panel-objections .inline-form .form-title').textContent = '✏ Editing Objection';
+  document.getElementById('objFormTitle').textContent = '✏ Editing Objection';
+  document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
+  const card = document.getElementById('admin-obj-card-' + oid);
+  if (card) card.style.borderColor = 'var(--accent)';
 }
 function clearObjForm() {
   document.getElementById('objText').value     = '';
   document.getElementById('objResponse').value = '';
   document.getElementById('objEditId').value   = '';
-  document.querySelector('#panel-objections .inline-form .form-title').textContent = '+ Add / Edit Objection';
+  document.getElementById('objFormTitle').textContent = '+ New Objection';
+  document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
 }
 async function deleteObj(oid) {
   if (!confirm('Delete this objection?')) return;
