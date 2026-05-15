@@ -1598,7 +1598,10 @@ function renderTrackPanel(pid) {
 
 function toggleTrackStage(tid) {
   const card = document.getElementById('track-card-' + tid);
-  if (card) card.classList.toggle('open');
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.track-stage-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
 }
 
 // ── Right panel: objections ────────────────
