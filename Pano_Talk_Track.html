@@ -147,7 +147,7 @@
     white-space: nowrap;
   }
   .nav-dropdown-btn:hover,
-  .nav-dropdown:hover .nav-dropdown-btn {
+  .nav-dropdown-btn.open {
     background: rgba(255,255,255,0.15);
     border-color: var(--accent-on-dark);
     color: var(--accent-on-dark);
@@ -157,12 +157,12 @@
     opacity: 0.7;
     transition: transform 0.2s;
   }
-  .nav-dropdown:hover .nav-dropdown-chevron { transform: rotate(180deg); }
+  .nav-dropdown-btn.open .nav-dropdown-chevron { transform: rotate(180deg); }
 
   .nav-dropdown-menu {
     display: none;
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 4px);
     left: 0;
     min-width: 180px;
     background: #0d1b3e;
@@ -172,7 +172,7 @@
     padding: 6px;
     z-index: 300;
   }
-  .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+  .nav-dropdown-menu.open { display: block; }
 
   .product-tab {
     display: block;
@@ -1017,7 +1017,7 @@
     </div>
     <div class="nav-divider"></div>
     <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
-      <button class="nav-dropdown-btn">
+      <button class="nav-dropdown-btn" id="callPlaybookBtn" onclick="togglePlaybookDropdown(event)">
         Call Playbook <span class="nav-dropdown-chevron">▾</span>
       </button>
       <div class="nav-dropdown-menu" id="productBar"></div>
@@ -1586,6 +1586,10 @@ function toggleRefState(row) {
 
 function switchProduct(pid) {
   activePid = pid;
+  const btn  = document.getElementById('callPlaybookBtn');
+  const menu = document.getElementById('productBar');
+  if (btn)  btn.classList.remove('open');
+  if (menu) menu.classList.remove('open');
   document.querySelectorAll('#productBar .product-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.pid === pid);
   });
@@ -1979,6 +1983,22 @@ async function importData(e) {
 }
 
 // ── INIT ──────────────────────────────────
+function togglePlaybookDropdown(e) {
+  e.stopPropagation();
+  const btn  = document.getElementById('callPlaybookBtn');
+  const menu = document.getElementById('productBar');
+  const isOpen = menu.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  menu.classList.toggle('open', !isOpen);
+}
+
+document.addEventListener('click', () => {
+  const btn  = document.getElementById('callPlaybookBtn');
+  const menu = document.getElementById('productBar');
+  if (btn)  btn.classList.remove('open');
+  if (menu) menu.classList.remove('open');
+});
+
 loadData().then(() => {
   const dropdown = document.getElementById('callPlaybookDropdown');
   const divider  = dropdown ? dropdown.previousElementSibling : null;
