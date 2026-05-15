@@ -1089,12 +1089,16 @@
     <!-- PRODUCTS PANEL -->
     <div id="panel-products" class="admin-panel active">
       <div class="section-title">Product Lines</div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px;align-items:start;">
+      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
+
+        <!-- LEFT header -->
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">New Product Line</div>
+        <!-- RIGHT header -->
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Products <span id="productCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
 
         <!-- LEFT: Add form -->
         <div style="position:sticky;top:20px;">
           <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-title">+ New Product Line</div>
             <div class="form-group">
               <label>Product Name</label>
               <input type="text" id="newProductName" placeholder="e.g. YuJa Verity">
@@ -1105,7 +1109,6 @@
 
         <!-- RIGHT: Product list -->
         <div>
-          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Products <span id="productCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
           <div id="productList"></div>
         </div>
 
@@ -1119,12 +1122,16 @@
         <select id="trackProduct" onchange="renderTrackList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
         <div class="section-title" style="margin-bottom:0;">Talk Tracks</div>
       </div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px;align-items:start;">
+      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
+
+        <!-- LEFT header -->
+        <div id="trackFormTitle" style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">+ New Talk Track</div>
+        <!-- RIGHT header -->
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
 
         <!-- LEFT: Form (always visible) -->
         <div style="position:sticky;top:20px;">
           <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-title" id="trackFormTitle">+ New Talk Track</div>
             <div class="form-group">
               <label>Stage Label</label>
               <input type="text" id="trackTitle" placeholder="e.g. Opener">
@@ -1143,7 +1150,6 @@
 
         <!-- RIGHT: Track list (scrollable) -->
         <div>
-          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
           <div id="trackList"></div>
         </div>
 
@@ -1157,12 +1163,16 @@
         <select id="objProduct" onchange="renderAdminObjList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
         <div class="section-title" style="margin-bottom:0;">Objections & Responses</div>
       </div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px;align-items:start;">
+      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
+
+        <!-- LEFT header -->
+        <div id="objFormTitle" style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">+ New Objection</div>
+        <!-- RIGHT header -->
+        <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Objections <span id="objAdminCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
 
         <!-- LEFT: Form -->
         <div style="position:sticky;top:20px;">
           <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-title" id="objFormTitle">+ New Objection</div>
             <div class="form-group">
               <label>Objection (what the prospect says)</label>
               <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
@@ -1181,7 +1191,6 @@
 
         <!-- RIGHT: Objection list -->
         <div>
-          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Objections <span id="objAdminCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
           <div id="objList-admin"></div>
         </div>
 
