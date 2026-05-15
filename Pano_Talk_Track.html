@@ -1992,11 +1992,14 @@ function togglePlaybookDropdown(e) {
   menu.classList.toggle('open', !isOpen);
 }
 
-document.addEventListener('click', () => {
-  const btn  = document.getElementById('callPlaybookBtn');
-  const menu = document.getElementById('productBar');
-  if (btn)  btn.classList.remove('open');
-  if (menu) menu.classList.remove('open');
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('callPlaybookDropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
+    const btn  = document.getElementById('callPlaybookBtn');
+    const menu = document.getElementById('productBar');
+    if (btn)  btn.classList.remove('open');
+    if (menu) menu.classList.remove('open');
+  }
 });
 
 loadData().then(() => {
