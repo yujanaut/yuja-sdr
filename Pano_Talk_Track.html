@@ -1043,26 +1043,38 @@
     <!-- TRACKS PANEL -->
     <div id="panel-tracks" class="admin-panel">
       <div class="section-title">Talk Tracks</div>
-      <div id="trackList"></div>
-      <div class="inline-form">
-        <div class="form-title">+ Add / Edit Talk Track</div>
-        <div class="form-group">
-          <label>Product</label>
-          <select id="trackProduct" onchange="renderTrackList()"></select>
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;">
+
+        <!-- LEFT: Form (always visible) -->
+        <div style="position:sticky;top:20px;">
+          <div class="inline-form" style="margin-bottom:0;">
+            <div class="form-title" id="trackFormTitle">+ New Talk Track</div>
+            <div class="form-group">
+              <label>Product</label>
+              <select id="trackProduct" onchange="renderTrackList()"></select>
+            </div>
+            <div class="form-group">
+              <label>Stage Label</label>
+              <input type="text" id="trackTitle" placeholder="e.g. Opener">
+            </div>
+            <div class="form-group">
+              <label>Script (exactly what to say)</label>
+              <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…"></textarea>
+            </div>
+            <input type="hidden" id="trackEditId">
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
+              <button class="btn-secondary" onclick="clearTrackForm()">Clear</button>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Stage Label (shown as section header)</label>
-          <input type="text" id="trackTitle" placeholder="e.g. OPENER — Cold Call">
+
+        <!-- RIGHT: Track list (scrollable) -->
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+          <div id="trackList"></div>
         </div>
-        <div class="form-group">
-          <label>Script (exactly what to say)</label>
-          <textarea id="trackBody" rows="6" placeholder="Hi [Name], this is [Your Name] calling from YuJa…"></textarea>
-        </div>
-        <input type="hidden" id="trackEditId">
-        <div class="btn-row">
-          <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
-          <button class="btn-secondary" onclick="clearTrackForm()">Clear</button>
-        </div>
+
       </div>
     </div>
 
@@ -1581,15 +1593,19 @@ function renderTrackList() {
   const el   = document.getElementById('trackList');
   const list = data.tracks.filter(t => t.productId === pid);
   if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
-  el.innerHTML = list.map(t => `
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">${escHtml(t.title)}</div>
-          <div class="card-meta">${escHtml(t.body.slice(0,80))}…</div>
+  const countEl = document.getElementById('trackCount');
+  if (countEl) countEl.textContent = list.length;
+  el.innerHTML = list.map((t, i) => `
+    <div class="card" id="admin-track-card-${t.id}" style="margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;" onclick="editTrack('${t.id}')">
+      <div class="card-header" style="margin-bottom:0;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);flex-shrink:0;">${i + 1}</span>
+          <div style="min-width:0;">
+            <div class="card-title" style="font-size:13px;">${escHtml(t.title)}</div>
+            <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(t.body.slice(0, 60))}…</div>
+          </div>
         </div>
-        <div style="display:flex;gap:6px">
-          <button class="btn-edit" onclick="editTrack('${t.id}')">Edit</button>
+        <div style="display:flex;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
           <button class="btn-danger" onclick="deleteTrack('${t.id}')">Delete</button>
         </div>
       </div>
@@ -1621,13 +1637,18 @@ function editTrack(tid) {
   document.getElementById('trackTitle').value    = t.title;
   document.getElementById('trackBody').value     = t.body;
   document.getElementById('trackEditId').value   = tid;
-  document.querySelector('#panel-tracks .inline-form .form-title').textContent = '✏ Editing Talk Track';
+  document.getElementById('trackFormTitle').textContent = '✏ Editing: ' + t.title;
+  document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
+  const card = document.getElementById('admin-track-card-' + tid);
+  if (card) card.style.borderColor = 'var(--accent)';
+  document.querySelector('#panel-tracks .inline-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearTrackForm() {
   document.getElementById('trackTitle').value  = '';
   document.getElementById('trackBody').value   = '';
   document.getElementById('trackEditId').value = '';
-  document.querySelector('#panel-tracks .inline-form .form-title').textContent = '+ Add / Edit Talk Track';
+  document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
+  document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
 }
 async function deleteTrack(tid) {
   if (!confirm('Delete this talk track?')) return;
