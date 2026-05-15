@@ -458,39 +458,39 @@
   .stage-color-4.track-section      { border-left: 4px solid var(--accent); }
 
   /* ── PANEL MODE TOGGLE ── */
-  .panel-mode-tabs {
+  .obj-panel-tabs {
     display: flex;
-    gap: 6px;
-    padding: 10px 12px 0;
-    border-bottom: 2px solid var(--border);
-    background: #1e2d50;
+    background: #0d1b3e;
     flex-shrink: 0;
+    border-bottom: 2px solid var(--accent);
   }
-  .panel-mode-tab {
+  .obj-panel-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     flex: 1;
-    padding: 9px 10px 10px;
-    background: rgba(255,255,255,0.08);
-    border: 1.5px solid rgba(255,255,255,0.15);
-    border-bottom: none;
-    border-radius: 7px 7px 0 0;
+    padding: 13px 16px;
+    background: transparent;
+    border: none;
     font-family: var(--sans);
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
     cursor: pointer;
     transition: all 0.15s;
-    letter-spacing: 0.01em;
     white-space: nowrap;
-    text-align: center;
-    margin-bottom: -2px;
+    justify-content: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
   }
-  .panel-mode-tab:hover { color: #ffffff; background: rgba(255,255,255,0.15); }
-  .panel-mode-tab.active {
-    background: var(--surface);
-    color: var(--accent);
-    border-color: var(--border);
-    border-bottom-color: var(--surface);
-    font-weight: 700;
+  .obj-panel-tab:last-child { border-right: none; }
+  .obj-panel-tab:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.06); }
+  .obj-panel-tab.active {
+    color: #ffffff;
+    background: rgba(0,169,157,0.2);
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: -2px;
   }
 
   /* ── LEFT: Objections panel ── */
@@ -1047,15 +1047,17 @@
 
     <!-- RIGHT: Panel (Objections or Customer References) -->
     <div class="obj-panel">
-      <div class="panel-section-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-        Objection Playbook
-      </div>
-
-      <!-- Mode toggle -->
-      <div class="panel-mode-tabs">
-        <button class="panel-mode-tab active" id="modeTabObj" onclick="switchPanelMode('objections')">Objection Handlers <span id="objCount" style="background:rgba(0,0,0,0.12);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px">0</span></button>
-        <button class="panel-mode-tab" id="modeTabRef" onclick="switchPanelMode('references')" style="font-size:12px;opacity:0.65;flex:0 0 auto;padding:10px 8px 11px;">Customer References</button>
+      <!-- Unified header tabs -->
+      <div class="obj-panel-tabs">
+        <button class="obj-panel-tab active" id="modeTabObj" onclick="switchPanelMode('objections')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+          Objection Playbook
+          <span id="objCount" style="background:rgba(255,255,255,0.15);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:4px;">0</span>
+        </button>
+        <button class="obj-panel-tab" id="modeTabRef" onclick="switchPanelMode('references')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Customer References
+        </button>
       </div>
 
       <!-- OBJECTIONS MODE -->
