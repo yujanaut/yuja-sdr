@@ -129,7 +129,7 @@
     left: 0;
     top: var(--nav-h);
     height: calc(100vh - var(--nav-h));
-    width: 36px;
+    width: 42px;
     background: #0d1b3e;
     z-index: 100;
     display: flex;
@@ -137,7 +137,8 @@
     align-items: center;
     transition: width 0.2s ease;
     overflow: hidden;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.18);
+    border-right: 3px solid var(--accent);
+    box-shadow: 3px 0 12px rgba(0,169,157,0.25);
   }
   .product-sidebar:hover {
     width: 180px;
@@ -147,12 +148,12 @@
     text-orientation: mixed;
     transform: rotate(180deg);
     font-family: var(--sans);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    padding: 16px 0;
+    color: rgba(255,255,255,0.85);
+    padding: 20px 0;
     white-space: nowrap;
     transition: opacity 0.15s;
     flex-shrink: 0;
@@ -202,7 +203,7 @@
     height: calc(100vh - var(--nav-h));
     overflow: hidden;
     min-width: 0;
-    margin-left: 36px;
+    margin-left: 42px;
   }
 
   /* ── LEFT: Talk Track ── */
