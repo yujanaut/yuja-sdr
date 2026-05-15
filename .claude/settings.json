@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "cd 'c:\\Users\\daniel.im\\OneDrive\\Desktop\\yuja-sdr'; $status = git status --porcelain; if ($status) { git add Pano_Talk_Track.html; git commit -m 'Auto-save changes'; git push origin main } ",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
