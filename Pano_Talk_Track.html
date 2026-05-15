@@ -1016,9 +1016,15 @@
   <!-- Two-column body -->
   <div class="sdr-body">
 
-    <!-- LEFT: Talk Track -->
-    <div class="track-panel" id="trackPanel">
-      <div class="empty-state">Loading…</div>
+    <!-- RIGHT: Talk Track -->
+    <div class="track-panel">
+      <div class="panel-section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Talk Track
+      </div>
+      <div id="trackPanel" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="empty-state">Loading…</div>
+      </div>
     </div>
 
     <!-- RIGHT: Panel (Objections or Customer References) -->
