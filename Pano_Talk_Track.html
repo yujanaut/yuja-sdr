@@ -200,33 +200,29 @@
     font-weight: 700;
   }
 
-  /* ── NAV PAGE BUTTONS ── */
-  .nav-page-btn {
+  /* Active product context bar */
+  .active-product-bar {
     display: flex;
     align-items: center;
-    padding: 9px 18px;
-    background: transparent;
-    border: 2px solid rgba(255,255,255,0.25);
-    border-radius: var(--radius);
-    color: #ffffff;
+    gap: 8px;
+    padding: 7px 20px;
+    background: #0d1b3e;
+    border-bottom: 2px solid var(--accent);
+  }
+  .active-product-label {
     font-family: var(--sans);
-    font-size: 14px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    flex-shrink: 0;
+    color: rgba(255,255,255,0.4);
   }
-  .nav-page-btn:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.5);
-  }
-  .nav-page-btn.active {
-    background: rgba(0,169,157,0.15);
-    border-color: var(--accent-on-dark);
+  .active-product-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
     color: var(--accent-on-dark);
+    letter-spacing: 0.02em;
   }
 
   /* Two-column body — offset left for sidebar */
@@ -676,137 +672,6 @@
   }
 
   /* ══════════════════════════════════════════
-     COMPETITIVE VIEW
-  ══════════════════════════════════════════ */
-  .competitive-wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 36px 32px 60px;
-  }
-  .competitive-header {
-    margin-bottom: 32px;
-  }
-  .competitive-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.01em;
-    margin-bottom: 6px;
-  }
-  .competitive-subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-  .competitive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-  }
-  .comp-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .comp-card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 20px;
-    background: #0d1b3e;
-    cursor: pointer;
-    user-select: none;
-  }
-  .comp-card-header:hover { background: #162547; }
-  .comp-card.open .comp-card-header { background: #0d1b3e; border-bottom: 2px solid var(--accent); }
-  .comp-logo-placeholder {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 800;
-    color: #ffffff;
-    flex-shrink: 0;
-    letter-spacing: -0.02em;
-  }
-  .comp-card-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
-    flex: 1;
-  }
-  .comp-card-chevron {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    transition: transform 0.2s;
-  }
-  .comp-card.open .comp-card-chevron { transform: rotate(180deg); color: var(--accent-on-dark); }
-  .comp-card-body {
-    display: none;
-    padding: 20px;
-  }
-  .comp-card.open .comp-card-body { display: block; }
-  .comp-section {
-    margin-bottom: 18px;
-  }
-  .comp-section:last-child { margin-bottom: 0; }
-  .comp-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-  .comp-pill-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .comp-pill {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    line-height: 1.4;
-  }
-  .comp-pill.strength {
-    background: rgba(34,197,94,0.1);
-    color: #15803d;
-    border: 1px solid rgba(34,197,94,0.25);
-  }
-  .comp-pill.weakness {
-    background: rgba(185,28,28,0.08);
-    color: #b91c1c;
-    border: 1px solid rgba(185,28,28,0.2);
-  }
-  .comp-killshots {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .comp-killshots li {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    padding-left: 16px;
-    position: relative;
-  }
-  .comp-killshots li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 700;
-  }
-
-  /* ══════════════════════════════════════════
      ADMIN VIEW (unchanged)
   ══════════════════════════════════════════ */
   .admin-wrap {
@@ -1177,20 +1042,25 @@
     <div class="nav-divider"></div>
     <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
       <button class="nav-dropdown-btn" id="callPlaybookBtn">
-        <span id="callPlaybookBtnLabel">Call Playbook</span> <span class="nav-dropdown-chevron">▾</span>
+        Call Playbook <span class="nav-dropdown-chevron">▾</span>
       </button>
       <div class="nav-dropdown-menu" id="productBar"></div>
     </div>
-    <button class="nav-page-btn" id="competitiveNavBtn" onclick="showView('competitive')" style="display:none;">Battle Cards</button>
   </div>
   <div class="nav-actions" id="navActions">
-    <button class="btn-ghost" id="backBtn" onclick="showView('sdr')" style="display:none">← Back</button>
+    <button class="btn-ghost" id="backBtn" onclick="showView('sdr')" style="display:none">← Cheat Sheet</button>
     <button class="btn-ghost" id="adminNavBtn" onclick="handleAdminNav()">Admin</button>
   </div>
 </nav>
 
 <!-- ═══════════ SDR VIEW ═══════════ -->
 <div id="view-sdr" class="view active">
+
+  <!-- Active product bar -->
+  <div class="active-product-bar" id="activeProductBar">
+    <span class="active-product-label">Now viewing:</span>
+    <span class="active-product-name" id="activeProductName">—</span>
+  </div>
 
   <!-- Two-column body -->
   <div class="sdr-body">
@@ -1252,19 +1122,6 @@
         <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button class="btn-primary" style="width:100%" onclick="doLogin()">Log In</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════ COMPETITIVE VIEW ═══════════ -->
-<div id="view-competitive" class="view">
-  <div class="competitive-wrap">
-    <div class="competitive-header">
-      <h1 class="competitive-title">Battle Cards</h1>
-      <p class="competitive-subtitle">Quick-reference kill shots for the competitors you'll face on calls.</p>
-    </div>
-    <div class="competitive-grid" id="competitiveGrid">
-      <!-- Cards injected by JS -->
     </div>
   </div>
 </div>
@@ -1591,45 +1448,29 @@ function mdBullet(id) {
 function showView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.getElementById('view-' + v).classList.add('active');
-  const adminBtn      = document.getElementById('adminNavBtn');
-  const backBtn       = document.getElementById('backBtn');
-  const dropdown      = document.getElementById('callPlaybookDropdown');
-  const compBtn       = document.getElementById('competitiveNavBtn');
-  const divider       = dropdown ? dropdown.previousElementSibling : null;
-
-  // Active state on nav page buttons
-  if (compBtn) compBtn.classList.toggle('active', v === 'competitive');
-
+  const adminBtn  = document.getElementById('adminNavBtn');
+  const backBtn   = document.getElementById('backBtn');
+  const dropdown  = document.getElementById('callPlaybookDropdown');
+  const divider   = dropdown ? dropdown.previousElementSibling : null;
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
     adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
     if (dropdown) dropdown.style.display = 'none';
-    if (divider)  divider.style.display  = 'none';
-    if (compBtn)  compBtn.style.display  = 'none';
+    if (divider) divider.style.display = 'none';
   } else if (v === 'sdr') {
     adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
     if (dropdown) dropdown.style.display = 'block';
-    if (divider)  divider.style.display  = 'block';
-    if (compBtn)  compBtn.style.display  = 'flex';
+    if (divider) divider.style.display = 'block';
     renderSDR();
-  } else if (v === 'competitive') {
-    adminBtn.onclick = handleAdminNav;
-    adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
-    backBtn.style.display = 'flex';
-    if (dropdown) dropdown.style.display = 'none';
-    if (divider)  divider.style.display  = 'none';
-    if (compBtn)  compBtn.style.display  = 'flex';
-    renderCompetitive();
   } else {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
     if (dropdown) dropdown.style.display = 'none';
-    if (divider)  divider.style.display  = 'none';
-    if (compBtn)  compBtn.style.display  = 'none';
+    if (divider) divider.style.display = 'none';
   }
 }
 
@@ -1709,8 +1550,8 @@ function renderSDR() {
 
   // Show first product
   activePid = data.products[0].id;
-  const labelEl  = document.getElementById('callPlaybookBtnLabel');
-  if (labelEl) labelEl.textContent = data.products[0].name;
+  const nameEl = document.getElementById('activeProductName');
+  if (nameEl) nameEl.textContent = data.products[0].name;
   renderTrackPanel(activePid);
   renderObjPanel(activePid);
   populateRefStates();
@@ -1779,9 +1620,9 @@ function toggleRefState(row) {
 
 function switchProduct(pid) {
   activePid = pid;
-  const prod    = data.products.find(p => p.id === pid);
-  const labelEl = document.getElementById('callPlaybookBtnLabel');
-  if (labelEl && prod) labelEl.textContent = prod.name;
+  const prod   = data.products.find(p => p.id === pid);
+  const nameEl = document.getElementById('activeProductName');
+  if (nameEl && prod) nameEl.textContent = prod.name;
   const btn  = document.getElementById('callPlaybookBtn');
   const menu = document.getElementById('productBar');
   if (btn)  btn.classList.remove('open');
@@ -2178,92 +2019,6 @@ async function importData(e) {
   } catch(err) { toast('Import failed — check file format', 'error'); }
 }
 
-// ── COMPETITIVE ───────────────────────────
-const COMPETITORS = [
-  {
-    name: 'Kaltura',
-    abbr: 'KA',
-    strengths: ['Large enterprise brand', 'Deep LMS integrations', 'Media management'],
-    weaknesses: ['Very expensive', 'Complex implementation', 'Slow support', 'Bloated UX'],
-    killshots: [
-      'Kaltura is built for media companies, not ed-tech — universities often overpay for features they never use.',
-      'Implementation timelines run 6–12 months. YuJa deploys in weeks.',
-      'Ask them about support SLAs. Kaltura customers routinely wait days for responses.',
-      'YuJa offers unlimited storage with no per-seat fees — Kaltura charges for both.',
-    ]
-  },
-  {
-    name: 'Panopto',
-    abbr: 'PA',
-    strengths: ['Strong lecture capture brand', 'Good search inside video', 'Microsoft alignment'],
-    weaknesses: ['Weak mobile experience', 'Limited accessibility tools', 'Pricing opacity', 'Microsoft-only focus'],
-    killshots: [
-      'Panopto is a single-product company. YuJa is a full platform — video, accessibility, quizzing, and more under one contract.',
-      'Panopto\'s ADA/WCAG compliance tools are limited. If accessibility is a compliance requirement, that\'s a real risk.',
-      'Ask them for a total cost of ownership breakdown — Panopto pricing gets complicated fast with add-ons.',
-      'YuJa supports all major LMS platforms equally. Panopto leans heavily Microsoft/Canvas.',
-    ]
-  },
-  {
-    name: 'Echo360',
-    abbr: 'EC',
-    strengths: ['Analytics focus', 'Student engagement data', 'Established in higher ed'],
-    weaknesses: ['Outdated UI', 'Limited integrations', 'Slow product innovation', 'High renewal costs'],
-    killshots: [
-      'Echo360 hasn\'t meaningfully updated its core product in years. YuJa ships new features quarterly.',
-      'Their analytics are their selling point, but the underlying capture and streaming quality lags behind.',
-      'Renewal increases of 15–25% are common. YuJa offers predictable multi-year pricing.',
-      'Ask about their integration roadmap. Echo360 customers frequently cite lack of LMS flexibility as a pain point.',
-    ]
-  },
-  {
-    name: 'Mediasite (Sonic Foundry)',
-    abbr: 'MS',
-    strengths: ['On-prem option', 'Long-tenured customer base', 'Hardware bundling'],
-    weaknesses: ['Legacy architecture', 'On-prem complexity', 'Weak cloud story', 'Slow support'],
-    killshots: [
-      'Mediasite is fundamentally an on-prem product. Cloud is bolted on, not native — and it shows.',
-      'Hardware-dependent capture means higher total cost and more IT burden.',
-      'Their customer base is loyal but aging. Schools that move to cloud-first are leaving.',
-      'YuJa is cloud-native with no hardware dependency. Lower cost, faster deployment, less IT overhead.',
-    ]
-  },
-];
-
-function toggleCompCard(idx) {
-  const card = document.getElementById('comp-card-' + idx);
-  if (!card) return;
-  card.classList.toggle('open');
-}
-
-function renderCompetitive() {
-  const grid = document.getElementById('competitiveGrid');
-  if (!grid) return;
-  grid.innerHTML = COMPETITORS.map((c, i) => `
-    <div class="comp-card" id="comp-card-${i}">
-      <div class="comp-card-header" onclick="toggleCompCard(${i})">
-        <div class="comp-logo-placeholder">${escHtml(c.abbr)}</div>
-        <span class="comp-card-name">${escHtml(c.name)}</span>
-        <span class="comp-card-chevron">▼</span>
-      </div>
-      <div class="comp-card-body">
-        <div class="comp-section">
-          <div class="comp-section-label">Their strengths (acknowledge, don't dismiss)</div>
-          <div class="comp-pill-list">${c.strengths.map(s => `<span class="comp-pill strength">${escHtml(s)}</span>`).join('')}</div>
-        </div>
-        <div class="comp-section">
-          <div class="comp-section-label">Their weaknesses</div>
-          <div class="comp-pill-list">${c.weaknesses.map(w => `<span class="comp-pill weakness">${escHtml(w)}</span>`).join('')}</div>
-        </div>
-        <div class="comp-section">
-          <div class="comp-section-label">Kill shots</div>
-          <ul class="comp-killshots">${c.killshots.map(k => `<li>${escHtml(k)}</li>`).join('')}</ul>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
 // ── INIT ──────────────────────────────────
 (function() {
   const btn      = document.getElementById('callPlaybookBtn');
@@ -2287,11 +2042,9 @@ function renderCompetitive() {
 
 loadData().then(() => {
   const dropdown = document.getElementById('callPlaybookDropdown');
-  const compBtn  = document.getElementById('competitiveNavBtn');
   const divider  = dropdown ? dropdown.previousElementSibling : null;
   if (dropdown) dropdown.style.display = 'block';
   if (divider)  divider.style.display  = 'block';
-  if (compBtn)  compBtn.style.display  = 'flex';
   renderSDR();
 });
 </script>
