@@ -218,52 +218,73 @@
     background: var(--surface);
   }
 
-  /* Horizontal stage tab strip */
-  .track-stage-tabs {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    flex-shrink: 0;
-    border-bottom: 2px solid var(--border);
-    background: var(--bg);
-    padding: 0 8px;
+  /* Vertical expanding stage cards */
+  .track-stage-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 40px;
   }
-  .track-stage-tabs::-webkit-scrollbar { display: none; }
-  .track-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    cursor: pointer;
-    background: none;
-    white-space: nowrap;
-    transition: all 0.15s;
-    flex-shrink: 0;
+  .track-stage-list::-webkit-scrollbar { width: 4px; }
+  .track-stage-list::-webkit-scrollbar-track { background: transparent; }
+  .track-stage-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .track-stage-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .track-nav-item:hover { background: var(--accent-dim2); }
-  .track-nav-item.active { border-bottom-color: var(--accent); background: var(--accent-dim); }
-  .track-nav-item.active .track-nav-label { color: var(--accent); font-weight: 700; }
-  .track-nav-label {
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dim);
-    line-height: 1.3;
+  .track-stage-card.open {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
   }
 
-  /* Content pane — now full width below tabs */
-  .track-content-pane {
-    flex: 1;
-    min-width: 0;
-    overflow-y: auto;
-    padding: 28px clamp(16px, 3vw, 40px) 60px;
+  .track-stage-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+    background: var(--surface);
   }
-  .track-content-pane::-webkit-scrollbar { width: 5px; }
-  .track-content-pane::-webkit-scrollbar-track { background: transparent; }
-  .track-content-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .track-stage-header:hover { background: var(--accent-dim2); }
+  .track-stage-card.open .track-stage-header { background: var(--accent-dim); border-bottom: 1.5px solid var(--border); }
+
+  .track-stage-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .track-stage-title {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .track-stage-card.open .track-stage-title { color: var(--accent); }
+  .track-stage-chevron {
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .track-stage-card.open .track-stage-chevron { transform: rotate(180deg); color: var(--accent); }
+
+  .track-stage-body {
+    display: none;
+    padding: 16px 18px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--text-dim);
+  }
+  .track-stage-card.open .track-stage-body { display: block; }
 
   /* Section headers */
   .track-section-header {
@@ -464,13 +485,6 @@
     border-left: 1px solid var(--border);
   }
 
-  .obj-panel-head {
-    padding: 18px 18px 14px;
-    border-bottom: 2px solid var(--border);
-    flex-shrink: 0;
-    background: var(--bg);
-  }
-
   .obj-count-pill {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -480,33 +494,6 @@
     padding: 2px 9px;
     border-radius: 10px;
   }
-
-  /* Search */
-  .obj-search-wrap {
-    position: relative;
-  }
-  .obj-search-wrap svg {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-  .obj-search {
-    width: 100%;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 12px 9px 40px;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13.5px;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .obj-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,169,157,0.12); background: var(--surface); }
-  .obj-search::placeholder { color: #9ca3af; }
 
   /* Objection list */
   .obj-list {
@@ -626,14 +613,8 @@
       height: auto;
       overflow: visible;
     }
-    .track-stage-tabs {
-      flex-wrap: wrap;
-      padding: 8px;
-      gap: 4px;
-    }
-    .track-nav-item { border-bottom: none; border-radius: 6px; border: 1.5px solid var(--border); margin-bottom: 0; }
-    .track-nav-item.active { border-color: var(--accent); }
-    .track-content-pane { padding: 20px 16px 32px; }
+    .track-stage-list { padding: 10px 10px 32px; }
+    .track-stage-card { margin-bottom: 6px; }
     .obj-panel {
       display: block;
       overflow: visible;
@@ -1055,14 +1036,6 @@
 
       <!-- OBJECTIONS MODE -->
       <div id="modeObj" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-        <div class="obj-panel-head">
-          <div class="obj-search-wrap">
-            <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#4a6080" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input class="obj-search" id="objSearch" type="text" placeholder="Search objections…" oninput="filterObjs()" style="padding-left:40px">
-          </div>
-        </div>
         <div class="obj-list" id="objList">
           <div class="empty-state">Loading…</div>
         </div>
@@ -1587,7 +1560,6 @@ function switchProduct(pid) {
   document.querySelectorAll('#productBar .product-tab').forEach(b => {
     b.classList.toggle('active', b.dataset.pid === pid);
   });
-  document.getElementById('objSearch').value = '';
   renderTrackPanel(pid);
   renderObjPanel(pid);
   // Refresh ref panel if it's the active mode
@@ -1607,36 +1579,26 @@ function renderTrackPanel(pid) {
   }
 
   const dotColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
-  const borderColors = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
 
-  // Top: horizontal stage tab strip
-  const navHtml = tracks.map((t, i) => {
+  const cardsHtml = tracks.map((t, i) => {
     const dot = dotColors[Math.min(i, dotColors.length - 1)];
-    return `<div class="track-nav-item${i === 0 ? ' active' : ''}" id="track-nav-${t.id}" onclick="selectTrackSection('${t.id}')">
-      <div style="width:9px;height:9px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
-      <span class="track-nav-label">${escHtml(t.title)}</span>
+    const isFirst = i === 0;
+    return `<div class="track-stage-card${isFirst ? ' open' : ''}" id="track-card-${t.id}">
+      <div class="track-stage-header" onclick="toggleTrackStage('${t.id}')">
+        <div class="track-stage-dot" style="background:${dot};"></div>
+        <span class="track-stage-title">${escHtml(t.title)}</span>
+        <span class="track-stage-chevron">▼</span>
+      </div>
+      <div class="track-stage-body">${mdToHtml(t.body)}</div>
     </div>`;
   }).join('');
 
-  // Below: content pane (only first visible)
-  const contentHtml = tracks.map((t, i) => {
-    return `<div id="track-content-${t.id}" style="display:${i === 0 ? 'block' : 'none'};">
-      <div class="track-text">${mdToHtml(t.body)}</div>
-    </div>`;
-  }).join('');
-
-  el.innerHTML = `
-    <div class="track-stage-tabs">${navHtml}</div>
-    <div class="track-content-pane">${contentHtml}</div>`;
+  el.innerHTML = `<div class="track-stage-list">${cardsHtml}</div>`;
 }
 
-function selectTrackSection(tid) {
-  document.querySelectorAll('.track-nav-item').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('[id^="track-content-"]').forEach(el => el.style.display = 'none');
-  const nav = document.getElementById('track-nav-' + tid);
-  const content = document.getElementById('track-content-' + tid);
-  if (nav) nav.classList.add('active');
-  if (content) content.style.display = 'block';
+function toggleTrackStage(tid) {
+  const card = document.getElementById('track-card-' + tid);
+  if (card) card.classList.toggle('open');
 }
 
 // ── Right panel: objections ────────────────
@@ -1649,10 +1611,7 @@ function renderObjPanel(pid) {
 function buildObjList(objs) {
   const el = document.getElementById('objList');
   if (!objs.length) {
-    const isSearch = document.getElementById('objSearch').value.trim().length > 0;
-    el.innerHTML = isSearch
-      ? '<div class="obj-no-results">No objections match your search.</div>'
-      : '<div class="empty-state" style="padding:32px 12px">No objections configured for this product.</div>';
+    el.innerHTML = '<div class="empty-state" style="padding:32px 12px">No objections configured for this product.</div>';
     return;
   }
   el.innerHTML = objs.map(o => `
@@ -1682,17 +1641,6 @@ function copyResponse(btn, oid) {
   });
 }
 
-function filterObjs() {
-  const q   = document.getElementById('objSearch').value.trim().toLowerCase();
-  const pid = activePid;
-  if (!pid) return;
-  const all = data.objections.filter(o => o.productId === pid);
-  const filtered = q
-    ? all.filter(o => o.text.toLowerCase().includes(q) || o.response.toLowerCase().includes(q))
-    : all;
-  buildObjList(filtered);
-  document.getElementById('objCount').textContent = filtered.length;
-}
 
 // ══════════════════════════════════════════
 //  ADMIN RENDER
