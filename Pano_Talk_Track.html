@@ -200,6 +200,31 @@
     font-weight: 700;
   }
 
+  /* Active product context bar */
+  .active-product-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 20px;
+    background: #0d1b3e;
+    border-bottom: 2px solid var(--accent);
+  }
+  .active-product-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .active-product-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-on-dark);
+    letter-spacing: 0.02em;
+  }
+
   /* Two-column body — offset left for sidebar */
   .sdr-body {
     display: grid;
@@ -1031,6 +1056,12 @@
 <!-- ═══════════ SDR VIEW ═══════════ -->
 <div id="view-sdr" class="view active">
 
+  <!-- Active product bar -->
+  <div class="active-product-bar" id="activeProductBar">
+    <span class="active-product-label">Now viewing:</span>
+    <span class="active-product-name" id="activeProductName">—</span>
+  </div>
+
   <!-- Two-column body -->
   <div class="sdr-body">
 
@@ -1519,6 +1550,8 @@ function renderSDR() {
 
   // Show first product
   activePid = data.products[0].id;
+  const nameEl = document.getElementById('activeProductName');
+  if (nameEl) nameEl.textContent = data.products[0].name;
   renderTrackPanel(activePid);
   renderObjPanel(activePid);
   populateRefStates();
@@ -1587,6 +1620,9 @@ function toggleRefState(row) {
 
 function switchProduct(pid) {
   activePid = pid;
+  const prod   = data.products.find(p => p.id === pid);
+  const nameEl = document.getElementById('activeProductName');
+  if (nameEl && prod) nameEl.textContent = prod.name;
   const btn  = document.getElementById('callPlaybookBtn');
   const menu = document.getElementById('productBar');
   if (btn)  btn.classList.remove('open');
