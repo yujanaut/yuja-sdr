@@ -1667,8 +1667,6 @@ function filterObjs() {
 function renderAdmin() {
   renderProductList();
   populateSelects();
-  renderTrackList();
-  renderAdminObjList();
 }
 
 function switchAdminTab(tab) {
@@ -1745,6 +1743,7 @@ async function deleteProduct(pid) {
     await db('products',   'DELETE', null, `?id=eq.${pid}`);
     await loadData();
     renderAdmin();
+    onAdminProductChange();
     renderSDR();
     toast('Product deleted', 'deleted');
   } catch(e) { toast('Error deleting product', 'error'); }
@@ -1756,9 +1755,9 @@ function renderTrackList() {
   const el   = document.getElementById('trackList');
   collapseNewCard('track', true);
   const list = data.tracks.filter(t => t.productId === pid);
-  if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
   const countEl = document.getElementById('trackCount');
   if (countEl) countEl.textContent = list.length;
+  if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
   el.innerHTML = list.map((t, i) => `
     <div class="card" id="admin-track-card-${t.id}" style="margin-bottom:8px;transition:border-color 0.15s;">
       <div class="card-header" style="margin-bottom:0;">
@@ -1884,9 +1883,6 @@ function renderAdminObjList() {
       </div>
     </div>`).join('');
 }
-// Keep old name for filter dropdown
-function renderObjList() { renderAdminObjList(); }
-
 async function saveObj() {
   const pid  = getAdminPid();
   const text = document.getElementById('objText').value.trim();
@@ -1959,6 +1955,7 @@ async function importData(e) {
     for (const o of imported.objections) await db('objections', 'POST', { id: o.id, product_id: o.productId, text: o.text, response: o.response, sort_order: 0 });
     await loadData();
     renderAdmin();
+    onAdminProductChange();
     renderSDR();
     toast('Import complete', 'success');
   } catch(err) { toast('Import failed — check file format', 'error'); }
