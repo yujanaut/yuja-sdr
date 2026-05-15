@@ -1658,7 +1658,8 @@ async function addProduct() {
   } catch(e) { toast('Error adding product'); }
 }
 async function deleteProduct(pid) {
-  if (!confirm('Delete this product and all its content?')) return;
+  const prod = data.products.find(p => p.id === pid);
+  if (!confirm(`Are you sure you want to delete "${prod ? prod.name : 'this product'}" and all of its talk tracks and objections?\n\nThis cannot be undone.`)) return;
   try {
     await db('objections', 'DELETE', null, `?product_id=eq.${pid}`);
     await db('tracks',     'DELETE', null, `?product_id=eq.${pid}`);
@@ -1679,7 +1680,7 @@ function renderTrackList() {
   const countEl = document.getElementById('trackCount');
   if (countEl) countEl.textContent = list.length;
   el.innerHTML = list.map((t, i) => `
-    <div class="card" id="admin-track-card-${t.id}" style="margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;" onclick="editTrack('${t.id}')">
+    <div class="card" id="admin-track-card-${t.id}" style="margin-bottom:8px;transition:border-color 0.15s;">
       <div class="card-header" style="margin-bottom:0;">
         <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
           <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);flex-shrink:0;">${i + 1}</span>
@@ -1688,7 +1689,8 @@ function renderTrackList() {
             <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(t.body.slice(0, 60))}…</div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn-edit" onclick="editTrack('${t.id}')">Edit</button>
           <button class="btn-danger" onclick="deleteTrack('${t.id}')">Delete</button>
         </div>
       </div>
@@ -1734,7 +1736,8 @@ function clearTrackForm() {
   document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
 }
 async function deleteTrack(tid) {
-  if (!confirm('Delete this talk track?')) return;
+  const t = data.tracks.find(t => t.id === tid);
+  if (!confirm(`Are you sure you want to delete "${t ? t.title : 'this talk track'}"?\n\nThis cannot be undone.`)) return;
   try {
     await db('tracks', 'DELETE', null, `?id=eq.${tid}`);
     await loadData();
@@ -1811,7 +1814,8 @@ function clearObjForm() {
   document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
 }
 async function deleteObj(oid) {
-  if (!confirm('Delete this objection?')) return;
+  const obj = data.objections.find(o => o.id === oid);
+  if (!confirm(`Are you sure you want to delete this objection?\n\n"${obj ? obj.text : ''}"\n\nThis cannot be undone.`)) return;
   try {
     await db('objections', 'DELETE', null, `?id=eq.${oid}`);
     await loadData();
