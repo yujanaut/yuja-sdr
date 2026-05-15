@@ -1043,16 +1043,12 @@
     <!-- TRACKS PANEL -->
     <div id="panel-tracks" class="admin-panel">
       <div class="section-title">Talk Tracks</div>
-      <div class="form-group">
-        <label>Product Line</label>
-        <select id="trackProductFilter" onchange="renderTrackList()"></select>
-      </div>
       <div id="trackList"></div>
       <div class="inline-form">
         <div class="form-title">+ Add / Edit Talk Track</div>
         <div class="form-group">
           <label>Product</label>
-          <select id="trackProduct"></select>
+          <select id="trackProduct" onchange="renderTrackList()"></select>
         </div>
         <div class="form-group">
           <label>Stage Label (shown as section header)</label>
@@ -1243,13 +1239,16 @@ function showView(v) {
   const backBtn  = document.getElementById('backBtn');
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
+    adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
   } else if (v === 'sdr') {
+    adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
     renderSDR();
   } else {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
+    adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
   }
 }
@@ -1258,6 +1257,11 @@ function showView(v) {
 function handleAdminNav() {
   if (isAdmin) { showView('admin'); renderAdmin(); return; }
   showView('login');
+}
+function doLogout() {
+  isAdmin = false;
+  document.getElementById('adminNavBtn').textContent = 'Admin';
+  showView('sdr');
 }
 function doLogin() {
   const pw = document.getElementById('loginPassword').value;
@@ -1415,44 +1419,39 @@ function renderTrackPanel(pid) {
   }
 
   const stageColors = ['stage-color-0','stage-color-1','stage-color-2','stage-color-3','stage-color-4'];
+  const dotColors   = ['#22c55e','#3b82f6','#a855f7','#f59e0b','var(--accent)'];
 
-  // Section header + stage jump tabs
-  let stageTabsHtml = `<div class="track-section-header">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.27 6.27l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-    Talk Track
-  </div>
-  <div class="stage-tabs">`;
-  tracks.forEach((t, i) => {
-    const cc = stageColors[Math.min(i, stageColors.length - 1)];
-    stageTabsHtml += `<button class="stage-tab ${cc}${i===0?' active':''}" onclick="jumpStage('stage-${t.id}', this)">${escHtml(t.title)}</button>`;
-  });
-  stageTabsHtml += '</div>';
-
-  // Build track sections
   let sectionsHtml = '';
   tracks.forEach((t, i) => {
-    const cc = stageColors[Math.min(i, stageColors.length - 1)];
+    const cc  = stageColors[Math.min(i, stageColors.length - 1)];
+    const dot = dotColors[Math.min(i, dotColors.length - 1)];
     sectionsHtml += `
-      <div class="track-section ${cc}" id="stage-${t.id}">
-        <div class="track-stage-heading">
-          <div class="track-stage-dot"></div>
-          <div class="track-stage-label">${escHtml(t.title)}</div>
-          <div class="track-stage-rule"></div>
+      <div class="track-section ${cc}" id="stage-${t.id}" style="padding:0;cursor:pointer;" onclick="toggleTrackSection('${t.id}')">
+        <div style="display:flex;align-items:center;gap:12px;padding:18px 24px;">
+          <div class="track-stage-dot" style="background:${dot};flex-shrink:0;"></div>
+          <div class="track-stage-label" style="flex:1;">${escHtml(t.title)}</div>
+          <span id="track-chevron-${t.id}" style="font-size:11px;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;">▼</span>
         </div>
-        <div class="track-text">${escHtml(t.body)}</div>
+        <div id="track-body-${t.id}" style="display:none;padding:0 24px 22px;border-top:1px solid var(--border);">
+          <div class="track-text" style="padding-top:18px;">${escHtml(t.body)}</div>
+        </div>
       </div>`;
   });
 
-  el.innerHTML = `<div class="track-panel-sticky">${stageTabsHtml}</div><div class="track-panel-content">${sectionsHtml}</div>`;
+  el.innerHTML = `<div class="track-panel-content" style="padding-top:28px;">${sectionsHtml}</div>`;
 }
 
-function jumpStage(id, btn) {
-  // Update active tab
-  btn.closest('.stage-tabs').querySelectorAll('.stage-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // Scroll section into view within the panel
-  const target = document.getElementById(id);
-  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function toggleTrackSection(tid) {
+  const body    = document.getElementById('track-body-' + tid);
+  const chevron = document.getElementById('track-chevron-' + tid);
+  const isOpen  = body.style.display !== 'none';
+  document.querySelectorAll('[id^="track-body-"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('[id^="track-chevron-"]').forEach(el => { el.style.transform = ''; el.style.color = 'var(--text-muted)'; });
+  if (!isOpen) {
+    body.style.display = 'block';
+    chevron.style.transform = 'rotate(180deg)';
+    chevron.style.color = 'var(--accent)';
+  }
 }
 
 // ── Right panel: objections ────────────────
@@ -1529,7 +1528,7 @@ function switchAdminTab(tab) {
 }
 
 function populateSelects() {
-  ['trackProductFilter','trackProduct','objProductFilter','objProduct'].forEach(id => {
+  ['trackProduct','objProductFilter','objProduct'].forEach(id => {
     const el = document.getElementById(id);
     el.innerHTML = data.products.map(p => `<option value="${p.id}">${escHtml(p.name)}</option>`).join('');
   });
@@ -1578,7 +1577,7 @@ async function deleteProduct(pid) {
 
 // TRACKS
 function renderTrackList() {
-  const pid  = document.getElementById('trackProductFilter').value;
+  const pid  = document.getElementById('trackProduct').value;
   const el   = document.getElementById('trackList');
   const list = data.tracks.filter(t => t.productId === pid);
   if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
