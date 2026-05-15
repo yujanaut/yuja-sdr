@@ -1676,13 +1676,14 @@ function renderAdminObjList() {
   }
   if (countEl) countEl.textContent = list.length;
   el.innerHTML = list.map(o => `
-    <div class="card" id="admin-obj-card-${o.id}" style="margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;" onclick="editObj('${o.id}')">
+    <div class="card" id="admin-obj-card-${o.id}" style="margin-bottom:8px;transition:border-color 0.15s;">
       <div class="card-header" style="margin-bottom:0;">
         <div style="flex:1;min-width:0;">
           <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
           <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(o.response.slice(0,60))}…</div>
         </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn-edit" onclick="editObj('${o.id}')">Edit</button>
           <button class="btn-danger" onclick="deleteObj('${o.id}')">Delete</button>
         </div>
       </div>
@@ -1721,6 +1722,7 @@ function editObj(oid) {
   document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
   const card = document.getElementById('admin-obj-card-' + oid);
   if (card) card.style.borderColor = 'var(--accent)';
+  document.querySelector('#panel-objections .inline-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearObjForm() {
   document.getElementById('objText').value     = '';
