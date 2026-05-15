@@ -774,6 +774,49 @@
     margin-bottom: 14px;
   }
 
+  /* ── Collapsible new-entry card ── */
+  .new-entry-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1.5px dashed var(--accent);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s, border-style 0.15s;
+    user-select: none;
+    margin-bottom: 0;
+  }
+  .new-entry-card:hover { background: var(--accent-dim); }
+  .new-entry-card.open {
+    border-style: solid;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom-color: transparent;
+    background: var(--accent-dim);
+  }
+  .new-entry-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .new-entry-chevron {
+    font-size: 14px;
+    color: var(--accent);
+    transition: transform 0.2s;
+  }
+  .new-entry-card.open .new-entry-chevron { transform: rotate(180deg); }
+  .new-entry-body {
+    display: none;
+    border: 1.5px solid var(--accent);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+  .new-entry-body.open { display: block; }
+
   /* ── LOGIN ── */
   .login-wrap { max-width: 380px; margin: 100px auto; padding: 0 24px; }
   .login-card {
@@ -1059,44 +1102,39 @@
         <select id="trackProduct" onchange="renderTrackList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
         <div class="section-title" style="margin-bottom:0;">Talk Tracks</div>
       </div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
 
-        <!-- LEFT header -->
-        <div id="trackFormTitle" style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">+ New Talk Track</div>
-        <!-- RIGHT header -->
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
-
-        <!-- LEFT: Form (always visible) -->
-        <div style="position:sticky;top:20px;">
-          <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-group">
-              <label>Stage Label</label>
-              <input type="text" id="trackTitle" placeholder="e.g. Opener">
+      <!-- New Talk Track collapsible card -->
+      <div class="new-entry-card" id="trackNewCard" onclick="expandNewCard('track')">
+        <span class="new-entry-label" id="trackFormTitle">+ New Talk Track</span>
+        <span class="new-entry-chevron" id="trackNewChevron">▾</span>
+      </div>
+      <div class="new-entry-body" id="trackNewBody">
+        <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+          <div class="form-group">
+            <label>Stage Label</label>
+            <input type="text" id="trackTitle" placeholder="e.g. Opener">
+          </div>
+          <div class="form-group">
+            <label>Script (exactly what to say)</label>
+            <div class="md-toolbar">
+              <button type="button" onclick="mdWrap('trackBody','**','**')" title="Bold"><b>B</b></button>
+              <button type="button" onclick="mdWrap('trackBody','*','*')" title="Italic"><i>I</i></button>
+              <button type="button" onclick="mdWrap('trackBody','__','__')" title="Underline"><u>U</u></button>
+              <button type="button" onclick="mdBullet('trackBody')" title="Bullet">• List</button>
             </div>
-            <div class="form-group">
-              <label>Script (exactly what to say)</label>
-              <div class="md-toolbar">
-                <button type="button" onclick="mdWrap('trackBody','**','**')" title="Bold"><b>B</b></button>
-                <button type="button" onclick="mdWrap('trackBody','*','*')" title="Italic"><i>I</i></button>
-                <button type="button" onclick="mdWrap('trackBody','__','__')" title="Underline"><u>U</u></button>
-                <button type="button" onclick="mdBullet('trackBody')" title="Bullet">• List</button>
-              </div>
-              <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…" class="md-toolbar-area"></textarea>
-            </div>
-            <input type="hidden" id="trackEditId">
-            <div class="btn-row">
-              <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
-              <button class="btn-secondary" onclick="clearTrackForm()">Clear</button>
-            </div>
+            <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…" class="md-toolbar-area"></textarea>
+          </div>
+          <input type="hidden" id="trackEditId">
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
+            <button class="btn-secondary" onclick="clearTrackForm()">Cancel</button>
           </div>
         </div>
-
-        <!-- RIGHT: Track list (scrollable) -->
-        <div>
-          <div id="trackList"></div>
-        </div>
-
       </div>
+
+      <!-- Existing list -->
+      <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin:20px 0 10px;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+      <div id="trackList"></div>
     </div>
 
     <!-- OBJECTIONS PANEL -->
@@ -1106,44 +1144,39 @@
         <select id="objProduct" onchange="renderAdminObjList()" style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--text);background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:10px 18px;outline:none;cursor:pointer;max-width:320px;margin-bottom:14px;display:block;"></select>
         <div class="section-title" style="margin-bottom:0;">Objections & Responses</div>
       </div>
-      <div style="display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:20px 20px;align-items:start;">
 
-        <!-- LEFT header -->
-        <div id="objFormTitle" style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">+ New Objection</div>
-        <!-- RIGHT header -->
-        <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;">Existing Objections <span id="objAdminCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
-
-        <!-- LEFT: Form -->
-        <div style="position:sticky;top:20px;">
-          <div class="inline-form" style="margin-bottom:0;">
-            <div class="form-group">
-              <label>Objection (what the prospect says)</label>
-              <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
+      <!-- New Objection collapsible card -->
+      <div class="new-entry-card" id="objNewCard" onclick="expandNewCard('obj')">
+        <span class="new-entry-label" id="objFormTitle">+ New Objection</span>
+        <span class="new-entry-chevron" id="objNewChevron">▾</span>
+      </div>
+      <div class="new-entry-body" id="objNewBody">
+        <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+          <div class="form-group">
+            <label>Objection (what the prospect says)</label>
+            <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
+          </div>
+          <div class="form-group">
+            <label>Your Response / Guideline</label>
+            <div class="md-toolbar">
+              <button type="button" onclick="mdWrap('objResponse','**','**')" title="Bold"><b>B</b></button>
+              <button type="button" onclick="mdWrap('objResponse','*','*')" title="Italic"><i>I</i></button>
+              <button type="button" onclick="mdWrap('objResponse','__','__')" title="Underline"><u>U</u></button>
+              <button type="button" onclick="mdBullet('objResponse')" title="Bullet">• List</button>
             </div>
-            <div class="form-group">
-              <label>Your Response / Guideline</label>
-              <div class="md-toolbar">
-                <button type="button" onclick="mdWrap('objResponse','**','**')" title="Bold"><b>B</b></button>
-                <button type="button" onclick="mdWrap('objResponse','*','*')" title="Italic"><i>I</i></button>
-                <button type="button" onclick="mdWrap('objResponse','__','__')" title="Underline"><u>U</u></button>
-                <button type="button" onclick="mdBullet('objResponse')" title="Bullet">• List</button>
-              </div>
-              <textarea id="objResponse" rows="8" placeholder="Acknowledge + pivot: 'That makes sense…'" class="md-toolbar-area"></textarea>
-            </div>
-            <input type="hidden" id="objEditId">
-            <div class="btn-row">
-              <button class="btn-primary" onclick="saveObj()">Save Objection</button>
-              <button class="btn-secondary" onclick="clearObjForm()">Clear</button>
-            </div>
+            <textarea id="objResponse" rows="8" placeholder="Acknowledge + pivot: 'That makes sense…'" class="md-toolbar-area"></textarea>
+          </div>
+          <input type="hidden" id="objEditId">
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveObj()">Save Objection</button>
+            <button class="btn-secondary" onclick="clearObjForm()">Cancel</button>
           </div>
         </div>
-
-        <!-- RIGHT: Objection list -->
-        <div>
-          <div id="objList-admin"></div>
-        </div>
-
       </div>
+
+      <!-- Existing list -->
+      <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin:20px 0 10px;">Existing Objections <span id="objAdminCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
+      <div id="objList-admin"></div>
     </div>
 
     <!-- SETTINGS PANEL -->
@@ -1708,6 +1741,12 @@ async function deleteProduct(pid) {
 function renderTrackList() {
   const pid  = document.getElementById('trackProduct').value;
   const el   = document.getElementById('trackList');
+  collapseNewCard('track');
+  document.getElementById('trackTitle').value  = '';
+  document.getElementById('trackBody').value   = '';
+  document.getElementById('trackEditId').value = '';
+  document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
+  document.querySelectorAll('[id^="admin-track-card-"]').forEach(c => c.style.borderColor = '');
   const list = data.tracks.filter(t => t.productId === pid);
   if (!list.length) { el.innerHTML = '<div class="empty-state" style="padding:20px 0">No talk tracks for this product.</div>'; return; }
   const countEl = document.getElementById('trackCount');
@@ -1748,6 +1787,20 @@ async function saveTrack() {
     toast(eid ? 'Talk track updated' : 'Talk track saved', 'success');
   } catch(e) { toast('Error saving talk track', 'error'); }
 }
+function expandNewCard(type) {
+  const card = document.getElementById(type + 'NewCard');
+  const body = document.getElementById(type + 'NewBody');
+  const isOpen = card.classList.contains('open');
+  if (isOpen) return; // already open — don't collapse while editing
+  card.classList.add('open');
+  body.classList.add('open');
+}
+function collapseNewCard(type) {
+  const card = document.getElementById(type + 'NewCard');
+  const body = document.getElementById(type + 'NewBody');
+  card.classList.remove('open');
+  body.classList.remove('open');
+}
 function editTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
   if (!t) return;
@@ -1759,7 +1812,8 @@ function editTrack(tid) {
   document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
   const card = document.getElementById('admin-track-card-' + tid);
   if (card) card.style.borderColor = 'var(--accent)';
-  document.querySelector('#panel-tracks .inline-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  expandNewCard('track');
+  document.getElementById('trackNewCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearTrackForm() {
   document.getElementById('trackTitle').value  = '';
@@ -1767,6 +1821,7 @@ function clearTrackForm() {
   document.getElementById('trackEditId').value = '';
   document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
   document.querySelectorAll('[id^="admin-track-card-"]').forEach(el => el.style.borderColor = '');
+  collapseNewCard('track');
 }
 async function deleteTrack(tid) {
   const t = data.tracks.find(t => t.id === tid);
@@ -1785,6 +1840,12 @@ function renderAdminObjList() {
   const pid  = document.getElementById('objProduct').value;
   const el   = document.getElementById('objList-admin');
   const countEl = document.getElementById('objAdminCount');
+  collapseNewCard('obj');
+  document.getElementById('objText').value     = '';
+  document.getElementById('objResponse').value = '';
+  document.getElementById('objEditId').value   = '';
+  document.getElementById('objFormTitle').textContent = '+ New Objection';
+  document.querySelectorAll('[id^="admin-obj-card-"]').forEach(c => c.style.borderColor = '');
   const list = data.objections.filter(o => o.productId === pid);
   if (!list.length) {
     el.innerHTML = '<div class="empty-state" style="padding:20px 0">No objections for this product.</div>';
@@ -1839,7 +1900,8 @@ function editObj(oid) {
   document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
   const card = document.getElementById('admin-obj-card-' + oid);
   if (card) card.style.borderColor = 'var(--accent)';
-  document.querySelector('#panel-objections .inline-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  expandNewCard('obj');
+  document.getElementById('objNewCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function clearObjForm() {
   document.getElementById('objText').value     = '';
@@ -1847,6 +1909,7 @@ function clearObjForm() {
   document.getElementById('objEditId').value   = '';
   document.getElementById('objFormTitle').textContent = '+ New Objection';
   document.querySelectorAll('[id^="admin-obj-card-"]').forEach(el => el.style.borderColor = '');
+  collapseNewCard('obj');
 }
 async function deleteObj(oid) {
   const obj = data.objections.find(o => o.id === oid);
