@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --surface2: #e8f5f4;
+    --bg: #e8ecf0;
+    --surface: #f2f4f6;
+    --surface2: #e2eeec;
     --border: #ccd8e0;
     --accent: #00a99d;
     --accent-on-dark: #2dcfc3;
@@ -176,7 +176,7 @@
     overflow: hidden;
     display: flex;
     border-right: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
   }
 
   /* Card list column */
@@ -186,7 +186,7 @@
     overflow-y: auto;
     border-right: 1px solid var(--border);
     padding: 20px 12px;
-    background: #f7f8fa;
+    background: var(--bg);
   }
   .track-card-list::-webkit-scrollbar { width: 4px; }
   .track-card-list::-webkit-scrollbar-track { background: transparent; }
@@ -426,7 +426,7 @@
     grid-row: 1 / 3;
     display: flex;
     flex-direction: column;
-    background: #f7f8fa;
+    background: var(--bg);
     overflow: hidden;
     border-left: 1px solid var(--border);
   }
@@ -435,7 +435,7 @@
     padding: 18px 18px 14px;
     border-bottom: 2px solid var(--border);
     flex-shrink: 0;
-    background: #f7f8fa;
+    background: var(--bg);
   }
 
   .obj-panel-title {
@@ -871,7 +871,7 @@
 
   .ref-panel {
     display: none;
-    background: #f8faf8;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
     padding: 16px 24px 18px;
     animation: slideDown 0.18s ease;
@@ -1514,11 +1514,7 @@ function renderTrackPanel(pid) {
 
   // Right: content panes (only first visible)
   const contentHtml = tracks.map((t, i) => {
-    const borderColor = borderColors[Math.min(i, borderColors.length - 1)];
     return `<div id="track-content-${t.id}" style="display:${i === 0 ? 'block' : 'none'};">
-      <div style="border-left:4px solid ${borderColor};padding-left:20px;margin-bottom:8px;">
-        <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${borderColor};margin-bottom:6px;">${escHtml(t.title)}</div>
-      </div>
       <div class="track-text">${escHtml(t.body)}</div>
     </div>`;
   }).join('');
