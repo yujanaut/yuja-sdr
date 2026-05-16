@@ -1024,69 +1024,33 @@
     white-space: nowrap;
   }
 
-  .ref-state-wrap { margin-top: 4px; }
-  .ref-state-select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 12px;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13.5px;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-  .ref-state-select:focus { border-color: var(--accent); }
-
-  .ref-results {
+  .ref-flat-card {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-  }
-
-  .ref-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    margin-bottom: 6px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
   }
-  .ref-card:last-child { margin-bottom: 0; }
-  .obj-answer:has(.ref-card) { white-space: normal; }
-  .obj-item.open .obj-answer:has(.ref-card) { padding: 10px 12px 12px; }
-
-  .ref-card-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .ref-flat-card:last-child { border-bottom: none; }
+  .ref-flat-card:hover { background: var(--accent-dim2); }
+  .ref-flat-state {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
     flex-shrink: 0;
-    font-size: 13px;
+    min-width: 90px;
   }
-
-  .ref-card-name {
+  .ref-flat-name {
+    font-family: var(--sans);
     font-size: 13px;
     font-weight: 500;
     color: var(--text);
-    font-family: var(--sans);
-  }
-
-  .ref-card-state {
-    font-family: var(--sans);
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 1px;
+    line-height: 1.4;
   }
 
   .ref-no-results {
@@ -1331,7 +1295,7 @@
 
       <!-- CUSTOMER REFERENCES MODE -->
       <div id="modeRef" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
-        <div class="obj-list" id="refStateList">
+        <div class="obj-list" id="refStateList" style="padding:0;">
           <div class="empty-state" style="padding:32px 12px;font-size:11px">Loading…</div>
         </div>
       </div>
@@ -1920,44 +1884,82 @@
 <script>
 // ── CUSTOMER REFERENCES DATA ──────────────────────────────
 const CUSTOMERS = [
-  { name: 'Angelo State University',                state: 'Texas',          products: ['Lumina'] },
-  { name: 'Chattahoochee Technical College',        state: 'Georgia',        products: ['Lumina'] },
-  { name: 'Southeastern Louisiana University',      state: 'Louisiana',      products: ['Lumina', 'Panorama'] },
-  { name: 'Southeastern Oklahoma State University', state: 'Oklahoma',       products: ['Lumina', 'Panorama'] },
-  { name: 'SUNY Broome Community College',          state: 'New York',       products: ['Lumina'] },
-  { name: 'University of Maryland Eastern Shore',   state: 'Maryland',       products: ['Lumina'] },
-  { name: 'El Paso Community College',              state: 'Texas',          products: ['Lumina'] },
-  { name: 'Northshore Technical Community College', state: 'Louisiana',      products: ['Panorama'] },
-  { name: 'South Louisiana Community College',      state: 'Louisiana',      products: ['Panorama'] },
-  { name: 'Saint Francis University',               state: 'Pennsylvania',   products: ['Lumina', 'Panorama'] },
-  { name: 'Chatham University',                     state: 'Pennsylvania',   products: ['Lumina'] },
-  { name: 'Parkland College',                       state: 'Illinois',       products: ['Lumina'] },
-  { name: 'Motlow State Community College',         state: 'Tennessee',      products: ['Lumina', 'Panorama'] },
-  { name: 'Meridian Community College',             state: 'Mississippi',    products: ['Panorama'] },
-  { name: 'Pellissippi State Community College',    state: 'Tennessee',      products: ['Panorama'] },
-  { name: 'Anglia Ruskin University',               state: 'United Kingdom', products: ['Lumina'] },
-  { name: 'North Carolina Virtual Public School',   state: 'North Carolina', products: ['Lumina'] },
-  { name: 'SUNY Corning Community College',              state: 'New York',              products: ['Lumina'] },
-  { name: 'Oakland University',                          state: 'Michigan',              products: ['Lumina'] },
-  { name: 'University of Calgary',                       state: 'Alberta, Canada',       products: ['Lumina'] },
-  { name: 'Johnson County Community College',            state: 'Kansas',                products: ['Lumina'] },
-  { name: 'Madison Area Technical College',              state: 'Wisconsin',             products: ['Lumina'] },
-  { name: 'A Technical College in the Southeastern Region', state: 'Southeastern US',   products: ['Lumina'] },
-  { name: 'Trident Technical College',                   state: 'South Carolina',        products: ['Lumina'] },
-  { name: 'Canterbury Christ Church University',         state: 'United Kingdom',        products: ['Lumina'] },
-  { name: 'University of Windsor',                       state: 'Ontario, Canada',       products: ['Lumina'] },
-  { name: 'Pamlico Community College',                   state: 'North Carolina',        products: ['Panorama'] },
-  { name: 'UC Riverside',                                state: 'California',            products: ['Lumina'] },
-  { name: 'Colorado Community College System',           state: 'Colorado',              products: ['Lumina'] },
-  { name: 'Trent University',                            state: 'Ontario, Canada',       products: ['Lumina'] },
-  { name: 'ArtCenter College of Design',                 state: 'California',            products: ['Lumina'] },
-  { name: 'Texas State Technical College',               state: 'Texas',                 products: ['Lumina'] },
-  { name: 'Southern Illinois University Edwardsville',   state: 'Illinois',              products: ['Lumina'] },
-  { name: 'OCAD University',                             state: 'Ontario, Canada',       products: ['Lumina'] },
-  { name: 'North Dakota University System',              state: 'North Dakota',          products: ['Lumina'] },
-  { name: 'Lamar University',                            state: 'Texas',                 products: ['Lumina'] },
-  { name: 'Red Rocks Community College',                 state: 'Colorado',              products: ['Lumina'] },
-  { name: 'Antelope Valley College',                     state: 'California',            products: ['Lumina'] },
+  // ── LUMINA ────────────────────────────────────────────────
+  { name: 'Angelo State University',                    state: 'Texas',             products: ['Lumina'] },
+  { name: 'Chattahoochee Technical College',            state: 'Georgia',           products: ['Lumina'] },
+  { name: 'Southeastern Louisiana University',          state: 'Louisiana',         products: ['Lumina'] },
+  { name: 'Southeastern Oklahoma State University',     state: 'Oklahoma',          products: ['Lumina'] },
+  { name: 'SUNY Broome Community College',              state: 'New York',          products: ['Lumina'] },
+  { name: 'University of Maryland Eastern Shore',       state: 'Maryland',          products: ['Lumina'] },
+  { name: 'El Paso Community College',                  state: 'Texas',             products: ['Lumina'] },
+  { name: 'Saint Francis University',                   state: 'Pennsylvania',      products: ['Lumina'] },
+  { name: 'Chatham University',                         state: 'Pennsylvania',      products: ['Lumina'] },
+  { name: 'Parkland College',                           state: 'Illinois',          products: ['Lumina'] },
+  { name: 'Motlow State Community College',             state: 'Tennessee',         products: ['Lumina'] },
+  { name: 'Anglia Ruskin University',                   state: 'United Kingdom',    products: ['Lumina'] },
+  { name: 'North Carolina Virtual Public School',       state: 'North Carolina',    products: ['Lumina'] },
+  { name: 'SUNY Corning Community College',             state: 'New York',          products: ['Lumina'] },
+  { name: 'Oakland University',                         state: 'Michigan',          products: ['Lumina'] },
+  { name: 'University of Calgary',                      state: 'Alberta, Canada',   products: ['Lumina'] },
+  { name: 'Johnson County Community College',           state: 'Kansas',            products: ['Lumina'] },
+  { name: 'Madison Area Technical College',             state: 'Wisconsin',         products: ['Lumina'] },
+  { name: 'Trident Technical College',                  state: 'South Carolina',    products: ['Lumina'] },
+  { name: 'Canterbury Christ Church University',        state: 'United Kingdom',    products: ['Lumina'] },
+  { name: 'University of Windsor',                      state: 'Ontario, Canada',   products: ['Lumina'] },
+  { name: 'UC Riverside',                               state: 'California',        products: ['Lumina'] },
+  { name: 'Colorado Community College System',          state: 'Colorado',          products: ['Lumina'] },
+  { name: 'Trent University',                           state: 'Ontario, Canada',   products: ['Lumina'] },
+  { name: 'ArtCenter College of Design',                state: 'California',        products: ['Lumina'] },
+  { name: 'Texas State Technical College',              state: 'Texas',             products: ['Lumina'] },
+  { name: 'Southern Illinois University Edwardsville',  state: 'Illinois',          products: ['Lumina'] },
+  { name: 'OCAD University',                            state: 'Ontario, Canada',   products: ['Lumina'] },
+  { name: 'North Dakota University System',             state: 'North Dakota',      products: ['Lumina'] },
+  { name: 'Lamar University',                           state: 'Texas',             products: ['Lumina'] },
+  { name: 'Red Rocks Community College',                state: 'Colorado',          products: ['Lumina'] },
+  { name: 'Antelope Valley College',                    state: 'California',        products: ['Lumina'] },
+  // ── PANORAMA ──────────────────────────────────────────────
+  { name: 'Jacksonville State University',              state: 'Alabama',           products: ['Panorama'] },
+  { name: 'Arkansas State University - Mountain Home',  state: 'Arkansas',          products: ['Panorama'] },
+  { name: 'Loyola Marymount University',                state: 'California',        products: ['Panorama'] },
+  { name: 'Aims Community College',                     state: 'Colorado',          products: ['Panorama'] },
+  { name: 'Yale University',                            state: 'Connecticut',       products: ['Panorama'] },
+  { name: 'Florida SouthWestern State College',         state: 'Florida',           products: ['Panorama'] },
+  { name: 'Clayton State University',                   state: 'Georgia',           products: ['Panorama'] },
+  { name: 'College of DuPage',                          state: 'Illinois',          products: ['Panorama'] },
+  { name: 'University of Notre Dame',                   state: 'Indiana',           products: ['Panorama'] },
+  { name: 'Northeast Iowa Community College',           state: 'Iowa',              products: ['Panorama'] },
+  { name: 'Washburn University',                        state: 'Kansas',            products: ['Panorama'] },
+  { name: 'Northern Kentucky University',               state: 'Kentucky',          products: ['Panorama'] },
+  { name: 'University of New Orleans',                  state: 'Louisiana',         products: ['Panorama'] },
+  { name: 'University of Manitoba',                     state: 'Manitoba, Canada',  products: ['Panorama'] },
+  { name: 'Loyola University Maryland',                 state: 'Maryland',          products: ['Panorama'] },
+  { name: 'Bristol Community College',                  state: 'Massachusetts',     products: ['Panorama'] },
+  { name: 'University of Michigan',                     state: 'Michigan',          products: ['Panorama'] },
+  { name: 'Macalester College',                         state: 'Minnesota',         products: ['Panorama'] },
+  { name: 'Northeast Mississippi Community College',    state: 'Mississippi',       products: ['Panorama'] },
+  { name: 'Jefferson College',                          state: 'Missouri',          products: ['Panorama'] },
+  { name: 'Doane University',                           state: 'Nebraska',          products: ['Panorama'] },
+  { name: 'Great Basin College',                        state: 'Nevada',            products: ['Panorama'] },
+  { name: 'Community College System of New Hampshire',  state: 'New Hampshire',     products: ['Panorama'] },
+  { name: 'Princeton University',                       state: 'New Jersey',        products: ['Panorama'] },
+  { name: 'Central New Mexico Community College',       state: 'New Mexico',        products: ['Panorama'] },
+  { name: 'Le Moyne College',                           state: 'New York',          products: ['Panorama'] },
+  { name: 'Davidson College',                           state: 'North Carolina',    products: ['Panorama'] },
+  { name: 'Rhodes State College',                       state: 'Ohio',              products: ['Panorama'] },
+  { name: 'Rose State College',                         state: 'Oklahoma',          products: ['Panorama'] },
+  { name: 'University of Windsor',                      state: 'Ontario, Canada',   products: ['Panorama'] },
+  { name: 'Portland Community College',                 state: 'Oregon',            products: ['Panorama'] },
+  { name: 'Saint Francis University',                   state: 'Pennsylvania',      products: ['Panorama'] },
+  { name: 'Clemson University',                         state: 'South Carolina',    products: ['Panorama'] },
+  { name: 'South Dakota Board of Regents',              state: 'South Dakota',      products: ['Panorama'] },
+  { name: 'Austin Peay State University',               state: 'Tennessee',         products: ['Panorama'] },
+  { name: 'Texas Tech University',                      state: 'Texas',             products: ['Panorama'] },
+  { name: 'Salt Lake Community College',                state: 'Utah',              products: ['Panorama'] },
+  { name: 'Vermont State Colleges',                     state: 'Vermont',           products: ['Panorama'] },
+  { name: 'Old Dominion University',                    state: 'Virginia',          products: ['Panorama'] },
+  { name: 'Columbia Basin College',                     state: 'Washington',        products: ['Panorama'] },
+  { name: 'Carroll University',                         state: 'Wisconsin',         products: ['Panorama'] },
+  { name: 'Casper College',                             state: 'Wyoming',           products: ['Panorama'] },
 ];
 
 // ── SUPABASE ──────────────────────────────────────────────
@@ -2252,45 +2254,20 @@ function populateRefStates() {
   const activeProduct = data.products.find(p => p.id === activePid);
   const productName   = activeProduct ? activeProduct.name : '';
 
-  // Group customers by state, filtered to active product
-  const stateMap = {};
-  CUSTOMERS
+  const matches = CUSTOMERS
     .filter(c => c.products.some(tag => productName.toLowerCase().includes(tag.toLowerCase())))
-    .forEach(c => {
-      if (!stateMap[c.state]) stateMap[c.state] = [];
-      stateMap[c.state].push(c);
-    });
+    .sort((a, b) => a.state.localeCompare(b.state));
 
-  const states = Object.keys(stateMap).sort();
-
-  if (!states.length) {
+  if (!matches.length) {
     el.innerHTML = '<div class="empty-state" style="padding:32px 12px;font-size:11px">No customer references for this product.</div>';
     return;
   }
 
-  el.innerHTML = states.map(state => {
-    const customers = stateMap[state];
-    const customersHtml = customers.map(c => `
-      <div class="ref-card">
-        <div class="ref-card-icon">🎓</div>
-        <div class="ref-card-name">${escHtml(c.name)}</div>
-      </div>`).join('');
-    return `
-      <div class="obj-item" id="ref-state-${state.replace(/[^a-z0-9]/gi,'_')}">
-        <div class="obj-q-row" onclick="toggleRefState(this)">
-          <span class="obj-q">${escHtml(state)}</span>
-          <span class="obj-chevron">▼</span>
-        </div>
-        <div class="obj-answer">${customersHtml}</div>
-      </div>`;
-  }).join('');
-}
-
-function toggleRefState(row) {
-  const item   = row.closest('.obj-item');
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('#refStateList .obj-item').forEach(i => i.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
+  el.innerHTML = matches.map(c => `
+    <div class="ref-flat-card">
+      <div class="ref-flat-state">${escHtml(c.state)}</div>
+      <div class="ref-flat-name">${escHtml(c.name)}</div>
+    </div>`).join('');
 }
 
 function switchProduct(pid) {
