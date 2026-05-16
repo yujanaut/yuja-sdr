@@ -1295,6 +1295,11 @@
 
       <!-- CUSTOMER REFERENCES MODE -->
       <div id="modeRef" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+        <div style="padding:10px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;">
+          <input type="text" id="refSearch" placeholder="Search state or school…" oninput="filterRefs(this.value)" autocomplete="off"
+            style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;transition:border-color 0.15s;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
         <div class="obj-list" id="refStateList" style="padding:0;">
           <div class="empty-state" style="padding:32px 12px;font-size:11px">Loading…</div>
         </div>
@@ -2249,21 +2254,37 @@ function switchPanelMode(mode) {
   if (!isObj) populateRefStates();
 }
 
+let refList = [];
+
 function populateRefStates() {
-  const el = document.getElementById('refStateList');
   const activeProduct = data.products.find(p => p.id === activePid);
   const productName   = activeProduct ? activeProduct.name : '';
 
-  const matches = CUSTOMERS
+  refList = CUSTOMERS
     .filter(c => c.products.some(tag => productName.toLowerCase().includes(tag.toLowerCase())))
     .sort((a, b) => a.state.localeCompare(b.state));
 
-  if (!matches.length) {
-    el.innerHTML = '<div class="empty-state" style="padding:32px 12px;font-size:11px">No customer references for this product.</div>';
+  const searchEl = document.getElementById('refSearch');
+  if (searchEl) searchEl.value = '';
+
+  renderRefList(refList);
+}
+
+function filterRefs(query) {
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? refList.filter(c => c.state.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+    : refList;
+  renderRefList(filtered);
+}
+
+function renderRefList(list) {
+  const el = document.getElementById('refStateList');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:32px 12px;font-size:11px">No results.</div>';
     return;
   }
-
-  el.innerHTML = matches.map(c => `
+  el.innerHTML = list.map(c => `
     <div class="ref-flat-card">
       <div class="ref-flat-state">${escHtml(c.state)}</div>
       <div class="ref-flat-name">${escHtml(c.name)}</div>
