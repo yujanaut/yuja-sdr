@@ -854,7 +854,71 @@
   }
   .new-entry-body.open { display: block; }
 
-  /* ── LOGIN ── */
+  /* ── LOGIN / GATE ── */
+  .gate-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d1b3e;
+    padding: 24px;
+  }
+  .gate-card {
+    background: #121f45;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .gate-logo { margin-bottom: 28px; }
+  .gate-logo img { height: 28px; width: auto; display: block; }
+  .gate-title {
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }
+  .gate-sub {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 28px;
+  }
+  .gate-card .form-group label {
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .gate-card input[type="password"] {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: #ffffff;
+    border-radius: var(--radius);
+  }
+  .gate-card input[type="password"]:focus {
+    border-color: var(--accent-on-dark);
+    outline: none;
+  }
+  .gate-card input[type="password"]::placeholder { color: rgba(255,255,255,0.25); }
+  .gate-error {
+    background: rgba(185,28,28,0.15);
+    border: 1px solid rgba(185,28,28,0.3);
+    color: #fca5a5;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    display: none;
+  }
+  .gate-error.visible { display: block; }
+
   .login-wrap { max-width: 380px; margin: 100px auto; padding: 0 24px; }
   .login-card {
     background: var(--surface);
@@ -1080,6 +1144,25 @@
   </div>
 </div>
 
+<!-- ═══════════ SDR GATE ═══════════ -->
+<div id="view-gate" class="view active">
+  <div class="gate-wrap">
+    <div class="gate-card">
+      <div class="gate-logo">
+        <img src="yuja_logo_final.png" alt="YuJa">
+      </div>
+      <div class="gate-title">SDR Call Playbook</div>
+      <div class="gate-sub">Enter your access password to continue.</div>
+      <div class="gate-error" id="gateError">Incorrect password — try again.</div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="gatePassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doGateLogin()">
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="doGateLogin()">Enter</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ ADMIN LOGIN ═══════════ -->
 <div id="view-login" class="view">
   <div class="login-wrap">
@@ -1225,17 +1308,30 @@
         </div>
       </div>
       <hr class="divider">
+      <div class="section-title">SDR Access Password</div>
+      <div class="card">
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="gatePass1" placeholder="New SDR password">
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="gatePass2" placeholder="Confirm new SDR password">
+        </div>
+        <button class="btn-primary" onclick="changeGatePassword()">Update SDR Password</button>
+      </div>
+      <hr class="divider">
       <div class="section-title">Admin Password</div>
       <div class="card">
         <div class="form-group">
           <label>New Password</label>
-          <input type="password" id="newPass1" placeholder="New password">
+          <input type="password" id="newPass1" placeholder="New admin password">
         </div>
         <div class="form-group">
           <label>Confirm Password</label>
-          <input type="password" id="newPass2" placeholder="Confirm new password">
+          <input type="password" id="newPass2" placeholder="Confirm new admin password">
         </div>
-        <button class="btn-primary" onclick="changePassword()">Update Password</button>
+        <button class="btn-primary" onclick="changePassword()">Update Admin Password</button>
       </div>
       <hr class="divider">
       <div class="section-title" style="color:var(--danger)">Danger Zone</div>
@@ -1296,7 +1392,9 @@ const CUSTOMERS = [
 // ── SUPABASE ──────────────────────────────────────────────
 const SUPABASE_URL = 'https://wvwcxmqyygtzxdnpfogu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MFYGEU5tFKCZ23j7c3RARQ_5Rk2cSEs';
-const PASS_KEY     = 'yuja_sdr_pass';
+const PASS_KEY      = 'yuja_sdr_pass';
+const GATE_KEY      = 'yuja_sdr_gate';
+const GATE_AUTH_KEY = 'yuja_sdr_authed';
 let isAdmin = false;
 let data    = { products: [], tracks: [], objections: [] };
 let activePid = null;
@@ -1335,8 +1433,34 @@ async function loadData() {
 
 // ── UTILS ─────────────────────────────────────────────────
 function uid() { return '_' + Math.random().toString(36).slice(2,9); }
-function getPass() { return localStorage.getItem(PASS_KEY) || 'yuja2024'; }
-function setPass(p) { localStorage.setItem(PASS_KEY, p); }
+function getPass()     { return localStorage.getItem(PASS_KEY) || 'yuja2024'; }
+function setPass(p)    { localStorage.setItem(PASS_KEY, p); }
+function getGatePass() { return localStorage.getItem(GATE_KEY) || 'yuja2024'; }
+function setGatePass(p){ localStorage.setItem(GATE_KEY, p); }
+function isGateAuthed(){ return sessionStorage.getItem(GATE_AUTH_KEY) === '1'; }
+function setGateAuthed(){ sessionStorage.setItem(GATE_AUTH_KEY, '1'); }
+
+function doGateLogin() {
+  const pw = document.getElementById('gatePassword').value;
+  if (pw === getGatePass()) {
+    setGateAuthed();
+    document.getElementById('gatePassword').value = '';
+    document.getElementById('gateError').classList.remove('visible');
+    loadData().then(() => {
+      const dropdown = document.getElementById('callPlaybookDropdown');
+      const compBtn  = document.getElementById('competitiveNavBtn');
+      const divider  = dropdown ? dropdown.previousElementSibling : null;
+      if (dropdown) dropdown.style.display = 'block';
+      if (divider)  divider.style.display  = 'block';
+      if (compBtn)  compBtn.style.display  = 'flex';
+      showView('sdr');
+    });
+  } else {
+    document.getElementById('gateError').classList.add('visible');
+    document.getElementById('gatePassword').value = '';
+    document.getElementById('gatePassword').focus();
+  }
+}
 
 let _toastTimer = null;
 function toast(msg, type = 'neutral') {
@@ -1468,6 +1592,16 @@ function doLogin() {
     toast('Incorrect password', 'error');
   }
 }
+function changeGatePassword() {
+  const a = document.getElementById('gatePass1').value;
+  const b = document.getElementById('gatePass2').value;
+  if (!a) return toast('Enter a password', 'error');
+  if (a !== b) return toast('Passwords do not match', 'error');
+  setGatePass(a);
+  document.getElementById('gatePass1').value = '';
+  document.getElementById('gatePass2').value = '';
+  toast('SDR password updated', 'success');
+}
 function changePassword() {
   const a = document.getElementById('newPass1').value;
   const b = document.getElementById('newPass2').value;
@@ -1476,7 +1610,7 @@ function changePassword() {
   setPass(a);
   document.getElementById('newPass1').value = '';
   document.getElementById('newPass2').value = '';
-  toast('Password updated', 'success');
+  toast('Admin password updated', 'success');
 }
 async function resetAll() {
   if (!confirm('Delete everything? This cannot be undone.')) return;
@@ -2010,13 +2144,18 @@ async function importData(e) {
   });
 })();
 
-loadData().then(() => {
-  const dropdown = document.getElementById('callPlaybookDropdown');
-  const divider  = dropdown ? dropdown.previousElementSibling : null;
-  if (dropdown) dropdown.style.display = 'block';
-  if (divider)  divider.style.display  = 'block';
-  renderSDR();
-});
+if (isGateAuthed()) {
+  loadData().then(() => {
+    const dropdown = document.getElementById('callPlaybookDropdown');
+    const compBtn  = document.getElementById('competitiveNavBtn');
+    const divider  = dropdown ? dropdown.previousElementSibling : null;
+    if (dropdown) dropdown.style.display = 'block';
+    if (divider)  divider.style.display  = 'block';
+    if (compBtn)  compBtn.style.display  = 'flex';
+    showView('sdr');
+  });
+}
+// else: view-gate is already active, user sees the login screen
 </script>
 </body>
 </html>
