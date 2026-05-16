@@ -123,6 +123,7 @@
   /* ── VIEWS ── */
   .view { display: none; }
   .view.active { display: block; }
+  body.loading .view { display: none !important; }
 
   /* ══════════════════════════════════════════
      SDR VIEW — TWO COLUMN LAYOUT
@@ -1078,7 +1079,7 @@
   }
 </style>
 </head>
-<body>
+<body class="loading">
 
 <nav>
   <div class="nav-left">
@@ -1444,6 +1445,7 @@ function doGateLogin() {
       if (dropdown) dropdown.style.display = 'block';
       if (divider)  divider.style.display  = 'block';
       if (compBtn)  compBtn.style.display  = 'flex';
+      document.body.classList.remove('loading');
       showView('sdr');
     });
   } else {
@@ -2133,10 +2135,12 @@ if (isGateAuthed()) {
     if (dropdown) dropdown.style.display = 'block';
     if (divider)  divider.style.display  = 'block';
     if (compBtn)  compBtn.style.display  = 'flex';
+    document.body.classList.remove('loading');
     showView('sdr');
   });
+} else {
+  document.body.classList.remove('loading');
 }
-// else: view-gate is already active, user sees the login screen
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/yuja-sdr/sw.js');

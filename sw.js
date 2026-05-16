@@ -1,4 +1,4 @@
-const CACHE = 'yuja-sdr-v1';
+const CACHE = 'yuja-sdr-v2';
 const STATIC = [
   '/yuja-sdr/',
   '/yuja-sdr/index.html',
