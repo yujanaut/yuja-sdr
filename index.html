@@ -2222,12 +2222,19 @@ function renderSDR() {
     bar.appendChild(btn);
   });
 
-  // No product selected by default — wait for SDR to choose
-  activePid = null;
+  // Restore last selected product from session, or show neutral prompt
+  const savedPid = sessionStorage.getItem('yuja_sdr_pid');
+  const validPid = savedPid && data.products.find(p => p.id === savedPid) ? savedPid : null;
+  activePid = validPid;
   const labelEl = document.getElementById('callPlaybookBtnLabel');
-  if (labelEl) labelEl.textContent = 'Select Product';
-  renderTrackPanel(null);
-  renderObjPanel(null);
+  if (labelEl) labelEl.textContent = validPid ? data.products.find(p => p.id === validPid).name : 'Select Product';
+  if (validPid) {
+    document.querySelectorAll('#productBar .product-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.pid === validPid);
+    });
+  }
+  renderTrackPanel(validPid);
+  renderObjPanel(validPid);
   populateRefStates();
 }
 
@@ -2285,6 +2292,7 @@ function renderRefList(list) {
 
 function switchProduct(pid) {
   activePid = pid;
+  sessionStorage.setItem('yuja_sdr_pid', pid);
   const prod    = data.products.find(p => p.id === pid);
   const labelEl = document.getElementById('callPlaybookBtnLabel');
   if (labelEl && prod) labelEl.textContent = prod.name;
