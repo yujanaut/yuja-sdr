@@ -66,7 +66,7 @@
   .nav-left {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 14px;
     flex: 1;
     min-width: 0;
     overflow: visible;
@@ -75,6 +75,7 @@
   .nav-brand {
     display: flex;
     align-items: center;
+    gap: 8px;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -88,7 +89,7 @@
   .nav-divider {
     width: 1px;
     height: 22px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.25);
     flex-shrink: 0;
   }
   .nav-actions { display: flex; gap: 8px; flex-shrink: 0; }
@@ -109,6 +110,7 @@
     gap: 6px;
   }
   .btn-ghost:hover { border-color: var(--accent-on-dark); color: var(--accent-on-dark); }
+  #backBtn { background: rgba(255,255,255,0.08); }
   .btn-accent {
     background: var(--accent);
     border: none;
@@ -199,11 +201,11 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background 120ms ease, color 120ms ease;
     letter-spacing: 0.01em;
   }
   .product-tab:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.12);
     color: #ffffff;
   }
   .product-tab.active {
@@ -269,7 +271,7 @@
     transition: background 0.12s;
     background: var(--surface);
   }
-  .track-stage-header:hover { background: var(--accent-dim2); }
+  .track-stage-header:hover { background: rgba(0,169,157,0.12); }
   .track-stage-card.open .track-stage-header { background: var(--accent-dim); border-bottom: 1px solid var(--border); }
 
   .track-stage-dot {
@@ -295,14 +297,16 @@
   .track-stage-card.open .track-stage-chevron { transform: rotate(180deg); color: var(--accent); }
 
   .track-stage-body {
-    display: none;
-    padding: 16px 18px 24px;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 18px;
     font-family: var(--sans);
     font-size: 14px;
     line-height: 1.85;
     color: var(--text-dim);
+    transition: max-height 220ms ease, padding 180ms ease;
   }
-  .track-stage-card.open .track-stage-body { display: block; }
+  .track-stage-card.open .track-stage-body { max-height: 800px; padding: 16px 18px 24px; }
 
   /* Section headers */
   .track-section-header {
@@ -565,8 +569,9 @@
     transition: background 0.12s;
     user-select: none;
   }
-  .obj-q-row:hover { background: #fffbeb; }
+  .obj-q-row:hover { background: rgba(0,169,157,0.04); }
   .obj-item.open .obj-q-row { background: #ffffff; border-left: 3px solid #d97706; padding-left: 11px; border-bottom: 1px solid #fcd34d; }
+  .obj-item.open .obj-q-row:hover { background: rgb(255,248,220); }
 
   .obj-q {
     font-size: 15px;
@@ -586,17 +591,18 @@
   .obj-item.open .obj-chevron { transform: rotate(180deg); color: #d97706; }
 
   .obj-answer {
-    display: none;
-    padding: 14px 16px 16px;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 16px;
     background: var(--surface);
     font-size: 14px;
     line-height: 1.65;
     color: var(--text-dim);
     white-space: pre-wrap;
     font-family: var(--sans);
-    animation: slideDown 0.18s ease;
+    transition: max-height 220ms ease, padding 180ms ease;
   }
-  .obj-item.open .obj-answer { display: block; }
+  .obj-item.open .obj-answer { max-height: 1200px; padding: 14px 16px 16px; }
 
   .obj-copy-btn {
     flex-shrink: 0;
