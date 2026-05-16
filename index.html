@@ -1099,6 +1099,165 @@
     border-radius: 6px;
     font-weight: 600;
   }
+
+  /* ── NAV PAGE BUTTON ── */
+  .nav-page-btn {
+    background: none;
+    border: 2px solid rgba(255,255,255,0.25);
+    color: #f3f4f6;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .nav-page-btn:hover { border-color: var(--accent-on-dark); color: var(--accent-on-dark); }
+  .nav-page-btn.active { border-color: var(--accent-on-dark); color: var(--accent-on-dark); background: rgba(0,169,157,0.12); }
+
+  /* ── BATTLE CARDS VIEW ── */
+  .bc-view {
+    padding: 32px 32px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .bc-product-section { margin-bottom: 48px; }
+  .bc-product-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bc-product-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .bc-product-badge {
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+  .bc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 900px) { .bc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .bc-grid { grid-template-columns: 1fr; } }
+  .bc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .bc-card-header {
+    background: #0d1b3e;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .bc-card-title {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    flex: 1;
+  }
+  .bc-card-tag {
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+  .bc-card-body { padding: 16px 18px; }
+  .bc-wins {
+    margin-bottom: 14px;
+  }
+  .bc-wins-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .bc-wins ul {
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .bc-wins li {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .bc-exchange {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bc-exchange-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .bc-exchange-label {
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .bc-exchange-label.they {
+    background: var(--danger-dim);
+    color: var(--danger);
+    border: 1px solid rgba(185,28,28,0.2);
+  }
+  .bc-exchange-label.you {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(0,169,157,0.25);
+  }
+  .bc-exchange-text {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
 </style>
 </head>
 <body class="loading">
@@ -1117,7 +1276,8 @@
     </div>
   </div>
   <div class="nav-actions" id="navActions">
-    <button class="btn-ghost" id="backBtn" onclick="showView('sdr')" style="display:none">← Cheat Sheet</button>
+    <button class="nav-page-btn" id="competitiveNavBtn" onclick="showView('competitive')" style="display:none;">Battle Cards</button>
+    <button class="btn-ghost" id="backBtn" onclick="showView('sdr')" style="display:none">← Back</button>
     <button class="btn-ghost" id="adminNavBtn" onclick="handleAdminNav()">Admin</button>
   </div>
 </nav>
@@ -1360,6 +1520,393 @@
   </div>
 </div>
 
+<!-- ═══════════ BATTLE CARDS VIEW ═══════════ -->
+<div id="view-competitive" class="view">
+  <div class="bc-view">
+
+    <!-- PANORAMA -->
+    <div class="bc-product-section">
+      <div class="bc-product-heading">
+        <span class="bc-product-name">Panorama</span>
+        <span class="bc-product-badge">Student Success Platform</span>
+      </div>
+      <div class="bc-grid">
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Civitas Learning</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Faster implementation — weeks, not months</li>
+                <li>No expensive consulting layer required</li>
+                <li>Purpose-built for advising workflows, not just analytics</li>
+                <li>Dedicated CSM at no extra cost</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We use Civitas for predictive analytics."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Civitas gives you insights — Panorama closes the loop by connecting those insights directly to advisor action and student outreach. Are your advisors actually able to act on what Civitas surfaces today?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">EAB Navigate</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Lower total cost — no per-seat pricing at scale</li>
+                <li>Faster onboarding with less IT overhead</li>
+                <li>More flexible survey and outreach tooling</li>
+                <li>YuJa ecosystem integration (LMS, video, accessibility)</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We're already on EAB Navigate."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Navigate is a strong platform. Where we tend to see institutions supplement or switch is on cost and flexibility — EAB's contracts tend to be rigid. Is cost or customization something that's come up in your renewal conversations?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Hobsons Starfish</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Modern UI — advisors actually use it</li>
+                <li>Real-time data sync vs. batch processing</li>
+                <li>Built-in survey and early alert tooling</li>
+                <li>Responsive support — 24/7 dedicated CSM</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We have Starfish."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Starfish has been around for a while — we hear that a lot. The two things advisors tell us most often is the interface feels dated and data takes too long to refresh. Is either of those something your team has felt?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LUMINA -->
+    <div class="bc-product-section">
+      <div class="bc-product-heading">
+        <span class="bc-product-name">Lumina</span>
+        <span class="bc-product-badge">Video Platform</span>
+      </div>
+      <div class="bc-grid">
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Kaltura</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Truly unlimited storage — no per-seat or per-GB fees</li>
+                <li>Built exclusively for higher ed, not media companies</li>
+                <li>Dedicated CSM 24/7 at no extra cost</li>
+                <li>Simpler implementation and faster time-to-value</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We're happy with Kaltura."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Kaltura is well-known. The two areas where we consistently win are cost and complexity — Kaltura charges per seat and per GB, and it's built for media companies as much as higher ed. Has cost or support response time been a pain point?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Panopto</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Full mobile app for recording and playback</li>
+                <li>In-video quizzing, branching, and student commenting</li>
+                <li>Student engagement analytics — not just storage</li>
+                <li>Deeper LMS integration and content discovery</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We use Panopto for lecture capture."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Panopto is solid for capture and storage. Where Lumina pulls ahead is engagement — are faculty recording content but not seeing students actually watch it? That gap is where we typically win."</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Zoom (recordings only)</span>
+            <span class="bc-card-tag">Displacement</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Eliminates Zoom cloud storage overage costs (5–7× savings)</li>
+                <li>Auto-ingests Zoom recordings into the LMS</li>
+                <li>Adds captions, search, and in-video quizzing</li>
+                <li>Recordings become actual course content, not just files</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We just use Zoom for everything."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"That's really common. The challenge is storage costs and the gap between Zoom recordings and the LMS. Lumina can auto-ingest your Zoom recordings into Canvas or Blackboard, caption them, and make them searchable. Has storage cost been a line item?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VERITY -->
+    <div class="bc-product-section">
+      <div class="bc-product-heading">
+        <span class="bc-product-name">Verity</span>
+        <span class="bc-product-badge">AI Proctoring</span>
+      </div>
+      <div class="bc-grid">
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Honorlock</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Native LMS integration — no browser extension required</li>
+                <li>AI-first, not human-review-dependent</li>
+                <li>Lower cost at scale — unlimited proctoring model</li>
+                <li>Student experience is less invasive and faster to start</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We use Honorlock."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Honorlock is well-known in the space. Where we tend to win is on student experience and LMS-native workflow — no extensions, no friction. Has student complaints about the proctoring setup been something your faculty deals with?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Respondus Monitor</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>No LockDown Browser dependency</li>
+                <li>Real-time AI flagging vs. post-exam review only</li>
+                <li>Works on any device including Chromebook</li>
+                <li>Centralized reporting dashboard for instructors</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We use Respondus Monitor with LockDown Browser."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"LockDown Browser is everywhere. The friction point we hear most is Chromebook compatibility and the post-exam-only review model. Does your institution have a lot of students on Chromebooks or mobile devices?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Proctorio</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Better student privacy reputation — less invasive data collection</li>
+                <li>Dedicated support vs. Proctorio's self-serve model</li>
+                <li>Transparent AI flagging — instructors see exactly what triggered a flag</li>
+                <li>Stronger compliance posture (FERPA, GDPR)</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We looked at Proctorio."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Proctorio has gotten a lot of scrutiny around student privacy and data practices — some institutions have had to walk it back after student pushback. Has that been a concern your institution has navigated?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EQUALGROUND -->
+    <div class="bc-product-section">
+      <div class="bc-product-heading">
+        <span class="bc-product-name">EqualGround</span>
+        <span class="bc-product-badge">Web Accessibility</span>
+      </div>
+      <div class="bc-grid">
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Siteimprove</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>AutoPilot actually fixes issues — Siteimprove only scans</li>
+                <li>Pushes remediations back into the CMS automatically</li>
+                <li>Combines accessibility, SEO, and content performance in one dashboard</li>
+                <li>Lower cost through tool consolidation</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We use Siteimprove."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Siteimprove is solid for scanning and reporting. The gap we see is remediation — it flags issues but your team still has to fix them manually. Is the backlog of flagged-but-unfixed issues something your team feels?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">AudioEye</span>
+            <span class="bc-card-tag">Competitor</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>No overlay widget — we fix the underlying code, not patch over it</li>
+                <li>Overlay tools have faced legal challenges — not a defensible compliance strategy</li>
+                <li>Full SEO and content performance integration</li>
+                <li>Works alongside developers, not against them</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"We have an accessibility overlay in place."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"Overlays are a common first step, but they've been specifically named as insufficient in multiple DOJ enforcement actions. Are you aware that overlay-reliant sites have still faced complaints even with the overlay active?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bc-card">
+          <div class="bc-card-header">
+            <span class="bc-card-title">Manual Audits / Dev Team</span>
+            <span class="bc-card-tag">Displacement</span>
+          </div>
+          <div class="bc-card-body">
+            <div class="bc-wins">
+              <div class="bc-wins-label">Why we win</div>
+              <ul>
+                <li>Continuous monitoring vs. point-in-time snapshot</li>
+                <li>Non-dev staff can resolve common issues without a ticket</li>
+                <li>Scales across thousands of pages — manual can't</li>
+                <li>Frees developers for complex work, not routine fixes</li>
+              </ul>
+            </div>
+            <div class="bc-exchange">
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label they">They say</span>
+                <span class="bc-exchange-text">"Our developers handle accessibility."</span>
+              </div>
+              <div class="bc-exchange-row">
+                <span class="bc-exchange-label you">You say</span>
+                <span class="bc-exchange-text">"That's a great foundation. The challenge we hear most is that it becomes a bottleneck — every fix goes through the dev queue, and issues accumulate faster than the team can clear them. How many pages are you manually covering today?"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1559,18 +2106,28 @@ function showView(v) {
   document.getElementById('view-' + v).classList.add('active');
   const adminBtn  = document.getElementById('adminNavBtn');
   const backBtn   = document.getElementById('backBtn');
+  const compBtn   = document.getElementById('competitiveNavBtn');
   const dropdown  = document.getElementById('callPlaybookDropdown');
   const divider   = dropdown ? dropdown.previousElementSibling : null;
   if (v === 'admin') {
     adminBtn.textContent = 'Log Out';
     adminBtn.onclick = doLogout;
     backBtn.style.display = 'flex';
+    if (compBtn) compBtn.style.display = 'none';
     if (dropdown) dropdown.style.display = 'none';
     if (divider) divider.style.display = 'none';
+  } else if (v === 'competitive') {
+    adminBtn.onclick = handleAdminNav;
+    adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
+    backBtn.style.display = 'flex';
+    if (compBtn) { compBtn.style.display = 'flex'; compBtn.classList.add('active'); }
+    if (dropdown) dropdown.style.display = 'block';
+    if (divider) divider.style.display = 'block';
   } else if (v === 'sdr') {
     adminBtn.onclick = handleAdminNav;
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     backBtn.style.display = 'none';
+    if (compBtn) { compBtn.style.display = 'flex'; compBtn.classList.remove('active'); }
     if (dropdown) dropdown.style.display = 'block';
     if (divider) divider.style.display = 'block';
     renderSDR();
@@ -1578,6 +2135,7 @@ function showView(v) {
     adminBtn.textContent = isAdmin ? 'Admin Panel' : 'Admin';
     adminBtn.onclick = handleAdminNav;
     backBtn.style.display = 'none';
+    if (compBtn) { compBtn.style.display = 'flex'; compBtn.classList.remove('active'); }
     if (dropdown) dropdown.style.display = 'none';
     if (divider) divider.style.display = 'none';
   }
