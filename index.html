@@ -873,27 +873,32 @@
   #view-gate.active ~ * nav,
   body:has(#view-gate.active) nav { display: none; }
 
-  .gate-wrap {
-    width: 100vw;
+  #view-gate.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
+    background: #0d1b3e;
+    padding: 24px;
+  }
+  .gate-wrap {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0d1b3e;
-    padding: 24px;
   }
   .gate-card {
     background: #121f45;
     border: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px;
     padding: 40px 36px;
     width: 100%;
-    max-width: 360px;
     max-width: 380px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
   .gate-logo { margin-bottom: 28px; }
-  .gate-logo img { height: 28px; width: auto; display: block; }
+  .gate-logo img { height: 32px; width: auto; display: block; }
   .gate-title {
     font-family: var(--sans);
     font-size: 18px;
@@ -916,8 +921,8 @@
     text-transform: uppercase;
   }
   .gate-card input[type="password"] {
-    background: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
     color: #ffffff;
     border-radius: var(--radius);
   }
