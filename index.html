@@ -234,7 +234,7 @@
   .track-stage-list {
     flex: 1;
     overflow-y: auto;
-    padding: 14px 14px 40px;
+    padding: 14px 16px 40px;
   }
   .track-stage-list::-webkit-scrollbar { width: 4px; }
   .track-stage-list::-webkit-scrollbar-track { background: transparent; }
@@ -243,7 +243,7 @@
   .track-stage-card {
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     overflow: hidden;
     background: var(--surface);
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
@@ -290,7 +290,7 @@
 
   .track-stage-body {
     display: none;
-    padding: 16px 18px 20px;
+    padding: 16px 18px 24px;
     font-family: var(--sans);
     font-size: 14px;
     line-height: 1.85;
@@ -527,7 +527,7 @@
   .obj-list {
     overflow-y: auto;
     flex: 1;
-    padding: 14px 14px 24px;
+    padding: 8px 14px 24px;
   }
   .obj-list::-webkit-scrollbar { width: 4px; }
   .obj-list::-webkit-scrollbar-track { background: transparent; }
@@ -864,7 +864,11 @@
   .new-entry-body.open { display: block; }
 
   /* ── LOGIN / GATE ── */
+  #view-gate.active ~ * nav,
+  body:has(#view-gate.active) nav { display: none; }
+
   .gate-wrap {
+    width: 100vw;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -878,6 +882,7 @@
     border-radius: 14px;
     padding: 40px 36px;
     width: 100%;
+    max-width: 360px;
     max-width: 380px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
@@ -1035,6 +1040,7 @@
     margin-bottom: 6px;
   }
   .ref-card:last-child { margin-bottom: 0; }
+  .obj-answer:has(.ref-card) { white-space: normal; padding: 10px 12px 12px; }
 
   .ref-card-icon {
     width: 28px;
