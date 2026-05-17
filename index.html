@@ -538,28 +538,24 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 14px 8px;
+    padding: 8px 14px;
     font-family: var(--sans);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .ref-panel-header svg { width: 13px; height: 13px; flex-shrink: 0; color: rgba(255,255,255,0.45); }
   .ref-panel-body {
-    padding: 10px 14px 12px;
+    padding: 0 14px 10px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
   }
   .ref-result-card {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex: 1;
+    width: 100%;
     min-width: 0;
     height: 36px;
     background: rgba(0,169,157,0.1);
@@ -1437,15 +1433,15 @@
         <div class="ref-panel-header">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Customer Reference
-        </div>
-        <div class="ref-panel-body">
-          <div class="ref-dropdown" id="refDropdown">
+          <div class="ref-dropdown" id="refDropdown" style="margin-left:8px;">
             <button class="ref-dropdown-btn" id="refDropdownBtn" onclick="toggleRefDropdown(event)">
               <span id="refDropdownLabel">— Select a state —</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="ref-dropdown-list" id="refDropdownList"></div>
           </div>
+        </div>
+        <div class="ref-panel-body">
           <div class="ref-result-card" id="refResultCard" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <div class="ref-result-info">
