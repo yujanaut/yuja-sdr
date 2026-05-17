@@ -1576,6 +1576,15 @@
       <div class="new-entry-body" id="objNewBody">
         <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
           <div class="form-group">
+            <label>Type</label>
+            <select id="objType">
+              <option value="">— Select a type —</option>
+              <option value="Brush-offs">Brush-offs</option>
+              <option value="Competitor / Incumbent">Competitor / Incumbent</option>
+              <option value="Blockers">Blockers</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>Objection (what the prospect says)</label>
             <input type="text" id="objText" placeholder="e.g. We're not interested right now.">
           </div>
@@ -2198,7 +2207,7 @@ async function loadData() {
     ]);
     data.products   = products.map(p => ({ id: p.id, name: p.name }));
     data.tracks     = tracks.map(t => ({ id: t.id, productId: t.product_id, title: t.title, body: t.body }));
-    data.objections = objections.map(o => ({ id: o.id, productId: o.product_id, text: o.text, response: o.response }));
+    data.objections = objections.map(o => ({ id: o.id, productId: o.product_id, text: o.text, response: o.response, type: o.type || '' }));
   } catch(e) {
     console.error('Failed to load data:', e);
     toast('Could not connect to database', 'error');
@@ -2589,28 +2598,7 @@ function renderObjPanel(pid) {
   buildObjList(objs);
 }
 
-const OBJ_CATEGORIES = [
-  {
-    label: 'Brush-offs',
-    keywords: ['not interested', 'not a good time', 'send me an email', 'too busy']
-  },
-  {
-    label: 'Competitor / Incumbent',
-    keywords: ['already have', 'happy with', 'kaltura', 'panopto', 'zoom', 'use zoom', 'video platform']
-  },
-  {
-    label: 'Blockers',
-    keywords: ['budget', 'not the right person', 'wrong person']
-  }
-];
-
-function classifyObj(text) {
-  const t = text.toLowerCase();
-  for (const cat of OBJ_CATEGORIES) {
-    if (cat.keywords.some(k => t.includes(k))) return cat.label;
-  }
-  return 'Other';
-}
+const OBJ_CATEGORY_ORDER = ['Brush-offs', 'Competitor / Incumbent', 'Blockers', 'Other'];
 
 function objCardHtml(o) {
   return `
@@ -2630,14 +2618,15 @@ function buildObjList(objs) {
     return;
   }
 
-  // Group into categories, preserving order within each
   const groups = {};
-  const order  = [...OBJ_CATEGORIES.map(c => c.label), 'Other'];
-  order.forEach(l => { groups[l] = []; });
-  objs.forEach(o => groups[classifyObj(o.text)].push(o));
+  OBJ_CATEGORY_ORDER.forEach(l => { groups[l] = []; });
+  objs.forEach(o => {
+    const label = OBJ_CATEGORY_ORDER.includes(o.type) ? o.type : 'Other';
+    groups[label].push(o);
+  });
 
   let html = '';
-  order.forEach(label => {
+  OBJ_CATEGORY_ORDER.forEach(label => {
     if (!groups[label].length) return;
     html += `<div class="obj-category-label">${label}</div>`;
     html += groups[label].map(objCardHtml).join('');
@@ -2823,6 +2812,7 @@ function collapseNewCard(type, resetFields) {
       document.getElementById('trackFormTitle').textContent = '+ New Talk Track';
       document.querySelectorAll('[id^="admin-track-card-"]').forEach(c => c.style.borderColor = '');
     } else if (type === 'obj') {
+      document.getElementById('objType').value     = '';
       document.getElementById('objText').value     = '';
       document.getElementById('objResponse').value = '';
       document.getElementById('objEditId').value   = '';
@@ -2880,7 +2870,10 @@ function renderAdminObjList() {
     <div class="card" id="admin-obj-card-${o.id}" style="margin-bottom:8px;transition:border-color 0.15s;">
       <div class="card-header" style="margin-bottom:0;">
         <div style="flex:1;min-width:0;">
-          <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+            <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
+            ${o.type ? `<span style="font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:1px 6px;white-space:nowrap;flex-shrink:0;">${escHtml(o.type)}</span>` : ''}
+          </div>
           <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(mdStrip(o.response).slice(0, 60))}…</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
@@ -2892,15 +2885,17 @@ function renderAdminObjList() {
 }
 async function saveObj() {
   const pid  = getAdminPid();
+  const type = document.getElementById('objType').value;
   const text = document.getElementById('objText').value.trim();
   const resp = document.getElementById('objResponse').value.trim();
   const eid  = document.getElementById('objEditId').value;
+  if (!type) return toast('Select a type', 'error');
   if (!text || !resp) return toast('Fill in all fields', 'error');
   try {
     if (eid) {
-      await db('objections', 'PATCH', { product_id: pid, text, response: resp }, `?id=eq.${eid}`);
+      await db('objections', 'PATCH', { product_id: pid, type, text, response: resp }, `?id=eq.${eid}`);
     } else {
-      await db('objections', 'POST', { id: uid(), product_id: pid, text, response: resp, sort_order: data.objections.length });
+      await db('objections', 'POST', { id: uid(), product_id: pid, type, text, response: resp, sort_order: data.objections.length });
     }
     await loadData();
     clearObjForm();
@@ -2913,6 +2908,7 @@ function editObj(oid) {
   const o = data.objections.find(o => o.id === oid);
   if (!o) return;
   document.getElementById('adminProductSelect').value = o.productId;
+  document.getElementById('objType').value      = o.type || '';
   document.getElementById('objText').value      = o.text;
   document.getElementById('objResponse').value  = o.response;
   document.getElementById('objEditId').value    = oid;
