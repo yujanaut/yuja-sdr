@@ -2285,13 +2285,29 @@ function populateRefFooter() {
   const activeProduct = data.products.find(p => p.id === activePid);
   const productName   = activeProduct ? activeProduct.name : '';
 
-  refFooterList = CUSTOMERS
+  // Match on exact product tag word to avoid cross-product bleed
+  const matched = CUSTOMERS
     .filter(c => c.products.some(tag => productName.toLowerCase().includes(tag.toLowerCase())))
     .sort((a, b) => a.state.localeCompare(b.state));
+
+  // Deduplicate: one entry per state (first match wins)
+  const seen = new Set();
+  refFooterList = matched.filter(c => {
+    if (seen.has(c.state)) return false;
+    seen.add(c.state);
+    return true;
+  });
 
   const sel = document.getElementById('refStateSelect');
   const result = document.getElementById('refFooterResult');
   if (!sel || !result) return;
+
+  if (!refFooterList.length) {
+    sel.innerHTML = '<option value="">— No data for this product —</option>';
+    result.textContent = 'No customer references on record for this product';
+    result.className = 'ref-footer-result empty';
+    return;
+  }
 
   sel.innerHTML = '<option value="">— Select a state —</option>' +
     refFooterList.map((c, i) => `<option value="${i}">${escHtml(c.state)}</option>`).join('');
