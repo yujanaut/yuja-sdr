@@ -786,6 +786,26 @@
     font-size: 11px;
   }
 
+  .obj-category-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px 6px;
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .obj-category-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .obj-category-label:first-child { padding-top: 4px; }
+
   /* ── EMPTY / LOADING ── */
   .empty-state {
     text-align: center;
@@ -2569,20 +2589,61 @@ function renderObjPanel(pid) {
   buildObjList(objs);
 }
 
-function buildObjList(objs) {
-  const el = document.getElementById('objList');
-  if (!objs.length) {
-    el.innerHTML = '<div class="empty-state" style="padding:32px 12px">No objections configured for this product.</div>';
-    return;
+const OBJ_CATEGORIES = [
+  {
+    label: 'Brush-offs',
+    keywords: ['not interested', 'not a good time', 'send me an email', 'too busy']
+  },
+  {
+    label: 'Competitor / Incumbent',
+    keywords: ['already have', 'happy with', 'kaltura', 'panopto', 'zoom', 'use zoom', 'video platform']
+  },
+  {
+    label: 'Blockers',
+    keywords: ['budget', 'not the right person', 'wrong person']
   }
-  el.innerHTML = objs.map(o => `
+];
+
+function classifyObj(text) {
+  const t = text.toLowerCase();
+  for (const cat of OBJ_CATEGORIES) {
+    if (cat.keywords.some(k => t.includes(k))) return cat.label;
+  }
+  return 'Other';
+}
+
+function objCardHtml(o) {
+  return `
     <div class="obj-item" id="obj-${o.id}">
       <div class="obj-q-row" onclick="toggleObj('${o.id}')">
         <span class="obj-q">"${escHtml(o.text)}"</span>
         <span class="obj-chevron">▼</span>
       </div>
       <div class="obj-answer" data-oid="${o.id}">${mdToHtml(o.response)}</div>
-    </div>`).join('');
+    </div>`;
+}
+
+function buildObjList(objs) {
+  const el = document.getElementById('objList');
+  if (!objs.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:32px 12px">No objections configured for this product.</div>';
+    return;
+  }
+
+  // Group into categories, preserving order within each
+  const groups = {};
+  const order  = [...OBJ_CATEGORIES.map(c => c.label), 'Other'];
+  order.forEach(l => { groups[l] = []; });
+  objs.forEach(o => groups[classifyObj(o.text)].push(o));
+
+  let html = '';
+  order.forEach(label => {
+    if (!groups[label].length) return;
+    html += `<div class="obj-category-label">${label}</div>`;
+    html += groups[label].map(objCardHtml).join('');
+  });
+
+  el.innerHTML = html;
 }
 
 function toggleObj(oid) {
