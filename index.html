@@ -2207,7 +2207,7 @@ async function loadData() {
     ]);
     data.products   = products.map(p => ({ id: p.id, name: p.name }));
     data.tracks     = tracks.map(t => ({ id: t.id, productId: t.product_id, title: t.title, body: t.body }));
-    data.objections = objections.map(o => ({ id: o.id, productId: o.product_id, text: o.text, response: o.response, type: o.type || '' }));
+    data.objections = objections.map(o => ({ id: o.id, productId: o.product_id, text: o.text, response: o.response, type: o.Type || '' }));
   } catch(e) {
     console.error('Failed to load data:', e);
     toast('Could not connect to database', 'error');
@@ -2893,9 +2893,9 @@ async function saveObj() {
   if (!text || !resp) return toast('Fill in all fields', 'error');
   try {
     if (eid) {
-      await db('objections', 'PATCH', { product_id: pid, type, text, response: resp }, `?id=eq.${eid}`);
+      await db('objections', 'PATCH', { product_id: pid, Type: type, text, response: resp }, `?id=eq.${eid}`);
     } else {
-      await db('objections', 'POST', { id: uid(), product_id: pid, type, text, response: resp, sort_order: data.objections.length });
+      await db('objections', 'POST', { id: uid(), product_id: pid, Type: type, text, response: resp, sort_order: data.objections.length });
     }
     await loadData();
     clearObjForm();
