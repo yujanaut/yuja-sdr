@@ -611,6 +611,13 @@
   .ref-dropdown-list::-webkit-scrollbar-track { background: transparent; }
   .ref-dropdown-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
   .ref-dropdown.open .ref-dropdown-list { display: block; }
+  .ref-dropdown-group {
+    display: flex;
+    align-items: flex-start;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 4px 0;
+  }
+  .ref-dropdown-group:first-child { border-top: none; }
   .ref-dropdown-letter {
     font-family: var(--sans);
     font-size: 10px;
@@ -618,18 +625,25 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent-on-dark);
-    padding: 8px 12px 4px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 8px 6px 12px;
+    flex-shrink: 0;
+    width: 28px;
+    line-height: 1.8;
   }
-  .ref-dropdown-letter:first-child { border-top: none; }
+  .ref-dropdown-options {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
   .ref-dropdown-option {
     font-family: var(--sans);
     font-size: 13px;
     font-weight: 500;
     color: rgba(255,255,255,0.85);
-    padding: 7px 12px 7px 18px;
+    padding: 6px 12px 6px 4px;
     cursor: pointer;
     transition: background 0.1s, color 0.1s;
+    border-radius: 4px;
   }
   .ref-dropdown-option:hover { background: rgba(0,169,157,0.15); color: #ffffff; }
   .ref-dropdown-option.selected { color: var(--accent-on-dark); font-weight: 700; }
@@ -2450,10 +2464,14 @@ function populateRefFooter() {
   });
 
   list.innerHTML = Object.keys(groups).sort().map(letter =>
-    `<div class="ref-dropdown-letter">${letter}</div>` +
-    groups[letter].map(({ c, i }) =>
-      `<div class="ref-dropdown-option" data-idx="${i}" onclick="onRefStateChange(${i})">${escHtml(c.state)}</div>`
-    ).join('')
+    `<div class="ref-dropdown-group">` +
+      `<div class="ref-dropdown-letter">${letter}</div>` +
+      `<div class="ref-dropdown-options">` +
+        groups[letter].map(({ c, i }) =>
+          `<div class="ref-dropdown-option" data-idx="${i}" onclick="onRefStateChange(${i})">${escHtml(c.state)}</div>`
+        ).join('') +
+      `</div>` +
+    `</div>`
   ).join('');
 }
 
