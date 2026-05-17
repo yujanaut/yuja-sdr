@@ -2598,7 +2598,7 @@ function renderObjPanel(pid) {
   buildObjList(objs);
 }
 
-const OBJ_CATEGORY_ORDER = ['Brush-offs', 'Competitor / Incumbent', 'Blockers', 'Other'];
+const OBJ_CATEGORY_ORDER = ['Brush-offs', 'Competitor / Incumbent', 'Blockers'];
 
 function objCardHtml(o) {
   return `
@@ -2621,7 +2621,7 @@ function buildObjList(objs) {
   const groups = {};
   OBJ_CATEGORY_ORDER.forEach(l => { groups[l] = []; });
   objs.forEach(o => {
-    const label = OBJ_CATEGORY_ORDER.includes(o.type) ? o.type : 'Other';
+    const label = OBJ_CATEGORY_ORDER.includes(o.type) ? o.type : 'Brush-offs';
     groups[label].push(o);
   });
 
