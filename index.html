@@ -2279,11 +2279,13 @@ function renderSDR() {
   populateRefFooter();
 }
 
+let refFooterList = [];
+
 function populateRefFooter() {
   const activeProduct = data.products.find(p => p.id === activePid);
   const productName   = activeProduct ? activeProduct.name : '';
 
-  const filtered = CUSTOMERS
+  refFooterList = CUSTOMERS
     .filter(c => c.products.some(tag => productName.toLowerCase().includes(tag.toLowerCase())))
     .sort((a, b) => a.state.localeCompare(b.state));
 
@@ -2292,26 +2294,21 @@ function populateRefFooter() {
   if (!sel || !result) return;
 
   sel.innerHTML = '<option value="">— Select a state —</option>' +
-    filtered.map(c => `<option value="${escHtml(c.state)}">${escHtml(c.state)}</option>`).join('');
+    refFooterList.map((c, i) => `<option value="${i}">${escHtml(c.state)}</option>`).join('');
 
   result.textContent = 'Pick a state to see current customer';
   result.className = 'ref-footer-result empty';
 }
 
-function onRefStateChange(state) {
+function onRefStateChange(idx) {
   const result = document.getElementById('refFooterResult');
   if (!result) return;
-  if (!state) {
+  if (idx === '') {
     result.textContent = 'Pick a state to see current customer';
     result.className = 'ref-footer-result empty';
     return;
   }
-  const activeProduct = data.products.find(p => p.id === activePid);
-  const productName   = activeProduct ? activeProduct.name : '';
-  const match = CUSTOMERS.find(c =>
-    c.state === state &&
-    c.products.some(tag => productName.toLowerCase().includes(tag.toLowerCase()))
-  );
+  const match = refFooterList[parseInt(idx, 10)];
   if (match) {
     result.textContent = match.name;
     result.className = 'ref-footer-result';
