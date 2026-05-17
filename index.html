@@ -2381,7 +2381,7 @@ function populateRefFooter() {
     return;
   }
 
-  // Group by first letter using optgroup
+  // Group by first letter using disabled separator options
   const groups = {};
   refFooterList.forEach((c, i) => {
     const letter = c.state[0].toUpperCase();
@@ -2390,9 +2390,8 @@ function populateRefFooter() {
   });
   sel.innerHTML = '<option value="">— Select a state —</option>' +
     Object.keys(groups).sort().map(letter =>
-      `<optgroup label="${letter}">` +
-      groups[letter].map(({ c, i }) => `<option value="${i}">${escHtml(c.state)}</option>`).join('') +
-      `</optgroup>`
+      `<option disabled style="color:#888;font-size:10px;letter-spacing:0.1em;">── ${letter} ──</option>` +
+      groups[letter].map(({ c, i }) => `<option value="${i}">${escHtml(c.state)}</option>`).join('')
     ).join('');
 
   result.textContent = 'Pick a state to see current customer';
