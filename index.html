@@ -414,6 +414,29 @@
   .obj-answer ul { padding-left: 1.4em; margin: 6px 0; }
   .obj-answer li { margin-bottom: 4px; }
 
+  /* Discovery layer headers — bold-only lines rendered as section labels */
+  .track-stage-body ul {
+    padding-left: 1.3em;
+    margin: 6px 0 14px;
+  }
+  .track-stage-body li {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .track-stage-body > span > strong:only-child {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 16px 0 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
   /* Space bold questions that follow a coaching callout */
   .track-stage-body em + span strong,
   .track-stage-body em + span b {
