@@ -2381,8 +2381,19 @@ function populateRefFooter() {
     return;
   }
 
+  // Group by first letter using optgroup
+  const groups = {};
+  refFooterList.forEach((c, i) => {
+    const letter = c.state[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push({ c, i });
+  });
   sel.innerHTML = '<option value="">— Select a state —</option>' +
-    refFooterList.map((c, i) => `<option value="${i}">${escHtml(c.state)}</option>`).join('');
+    Object.keys(groups).sort().map(letter =>
+      `<optgroup label="${letter}">` +
+      groups[letter].map(({ c, i }) => `<option value="${i}">${escHtml(c.state)}</option>`).join('') +
+      `</optgroup>`
+    ).join('');
 
   result.textContent = 'Pick a state to see current customer';
   result.className = 'ref-footer-result empty';
