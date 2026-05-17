@@ -1403,7 +1403,7 @@
         Customer Reference
       </div>
       <div class="ref-dropdown" id="refDropdown">
-        <button class="ref-dropdown-btn" id="refDropdownBtn" onclick="toggleRefDropdown()">
+        <button class="ref-dropdown-btn" id="refDropdownBtn" onclick="toggleRefDropdown(event)">
           <span id="refDropdownLabel">— Select a state —</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
@@ -2384,9 +2384,9 @@ function renderSDR() {
   }
 
   // Build product tabs
-  data.products.forEach((p, i) => {
+  data.products.forEach(p => {
     const btn = document.createElement('button');
-    btn.className   = 'product-tab' + (i === 0 ? ' active' : '');
+    btn.className   = 'product-tab';
     btn.dataset.pid = p.id;
     btn.textContent = p.name;
     btn.onclick     = () => switchProduct(p.id);
@@ -2452,12 +2452,13 @@ function populateRefFooter() {
   list.innerHTML = Object.keys(groups).sort().map(letter =>
     `<div class="ref-dropdown-letter">${letter}</div>` +
     groups[letter].map(({ c, i }) =>
-      `<div class="ref-dropdown-option" onclick="onRefStateChange(${i})">${escHtml(c.state)}</div>`
+      `<div class="ref-dropdown-option" data-idx="${i}" onclick="onRefStateChange(${i})">${escHtml(c.state)}</div>`
     ).join('')
   ).join('');
 }
 
-function toggleRefDropdown() {
+function toggleRefDropdown(e) {
+  e.stopPropagation();
   document.getElementById('refDropdown').classList.toggle('open');
 }
 
@@ -2472,9 +2473,9 @@ function onRefStateChange(idx) {
     label.textContent = match.state;
     result.textContent = match.name;
     result.className = 'ref-footer-result';
-    document.querySelectorAll('.ref-dropdown-option').forEach(el => el.classList.remove('selected'));
-    const opts = document.querySelectorAll('.ref-dropdown-option');
-    opts.forEach(el => { if (el.onclick && el.onclick.toString().includes(`(${idx})`)) el.classList.add('selected'); });
+    document.querySelectorAll('.ref-dropdown-option').forEach(el => {
+      el.classList.toggle('selected', parseInt(el.dataset.idx, 10) === idx);
+    });
   }
   if (dropdown) dropdown.classList.remove('open');
 }
