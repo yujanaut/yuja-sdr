@@ -2278,6 +2278,12 @@ function mdInline(line) {
     .replace(/__(\S(?:[^_]*\S)?)__/g,     '<span style="text-decoration:underline">$1</span>');
 }
 
+function mdToHtmlNoCoach(str) {
+  // Strip lines that are purely a coaching note: *text* with no other content
+  const stripped = (str || '').split('\n').filter(line => !/^\*[^*].+[^*]\*$/.test(line.trim())).join('\n');
+  return mdToHtml(stripped);
+}
+
 function mdToHtml(str) {
   const lines = (str || '').split('\n');
   const out = [];
@@ -2581,7 +2587,7 @@ function renderTrackPanel(pid) {
         <span class="track-stage-title">${escHtml(t.title)}</span>
         <span class="track-stage-chevron">▼</span>
       </div>
-      <div class="track-stage-body">${mdToHtml(t.body)}</div>
+      <div class="track-stage-body">${mdToHtmlNoCoach(t.body)}</div>
     </div>`;
   }).join('');
 
