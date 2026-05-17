@@ -2866,14 +2866,19 @@ function renderAdminObjList() {
     return;
   }
   if (countEl) countEl.textContent = list.length;
-  el.innerHTML = list.map(o => `
+
+  const groups = {};
+  OBJ_CATEGORY_ORDER.forEach(l => { groups[l] = []; });
+  list.forEach(o => {
+    const label = OBJ_CATEGORY_ORDER.includes(o.type) ? o.type : OBJ_CATEGORY_ORDER[0];
+    groups[label].push(o);
+  });
+
+  const adminCardHtml = o => `
     <div class="card" id="admin-obj-card-${o.id}" style="margin-bottom:8px;transition:border-color 0.15s;">
       <div class="card-header" style="margin-bottom:0;">
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-            <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
-            ${o.type ? `<span style="font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:1px 6px;white-space:nowrap;flex-shrink:0;">${escHtml(o.type)}</span>` : ''}
-          </div>
+          <div class="card-title" style="font-size:13px;">"${escHtml(o.text)}"</div>
           <div class="card-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">${escHtml(mdStrip(o.response).slice(0, 60))}…</div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;">
@@ -2881,7 +2886,15 @@ function renderAdminObjList() {
           <button class="btn-danger" onclick="deleteObj('${o.id}')">Delete</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+
+  let html = '';
+  OBJ_CATEGORY_ORDER.forEach(label => {
+    if (!groups[label].length) return;
+    html += `<div style="font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:16px 0 8px;border-top:1px solid var(--border);margin-top:4px;">${label}</div>`;
+    html += groups[label].map(adminCardHtml).join('');
+  });
+  el.innerHTML = html;
 }
 async function saveObj() {
   const pid  = getAdminPid();
