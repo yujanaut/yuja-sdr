@@ -2524,7 +2524,6 @@ function toggleRefDropdown(e) {
 function onRefStateChange(idx) {
   const label    = document.getElementById('refDropdownLabel');
   const card     = document.getElementById('refResultCard');
-  const statEl   = document.getElementById('refResultState');
   const nameEl   = document.getElementById('refResultName');
   const dropdown = document.getElementById('refDropdown');
   if (!label || !card) return;
@@ -2532,7 +2531,6 @@ function onRefStateChange(idx) {
   const match = refFooterList[idx];
   if (match) {
     label.textContent = match.state;
-    statEl.textContent = match.state;
     nameEl.textContent = match.name;
     card.style.display = 'flex';
     document.querySelectorAll('.ref-dropdown-option').forEach(el => {
