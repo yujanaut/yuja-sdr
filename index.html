@@ -535,10 +535,18 @@
     background: #0d1b3e;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0;
     padding: 0 20px;
     border-top: 1px solid rgba(255,255,255,0.12);
     flex-shrink: 0;
+  }
+  .ref-footer-inner {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 680px;
+    width: 100%;
   }
   .ref-footer-label {
     font-family: var(--sans);
@@ -578,7 +586,6 @@
     flex-shrink: 0;
   }
   .ref-footer-result {
-    flex: 1;
     font-family: var(--sans);
     font-size: 14px;
     font-weight: 600;
@@ -1338,15 +1345,17 @@
 
   <!-- CUSTOMER REFERENCES FOOTER BAR -->
   <div class="ref-footer-bar">
-    <div class="ref-footer-label">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Customer Ref
+    <div class="ref-footer-inner">
+      <div class="ref-footer-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Customer Ref
+      </div>
+      <select id="refStateSelect" class="ref-footer-select" onchange="onRefStateChange(this.value)">
+        <option value="">— Select a state —</option>
+      </select>
+      <div class="ref-footer-divider"></div>
+      <div class="ref-footer-result empty" id="refFooterResult">Pick a state to see current customer</div>
     </div>
-    <select id="refStateSelect" class="ref-footer-select" onchange="onRefStateChange(this.value)">
-      <option value="">— Select a state —</option>
-    </select>
-    <div class="ref-footer-divider"></div>
-    <div class="ref-footer-result empty" id="refFooterResult">Pick a state to see current customer</div>
   </div>
 
 </div>
