@@ -1523,10 +1523,6 @@
       <button class="admin-tab" onclick="switchAdminTab('objections')">Objections</button>
       <button class="admin-tab" onclick="switchAdminTab('products')">Product Lines</button>
       <button class="admin-tab" onclick="switchAdminTab('settings')">Settings</button>
-      <div id="adminProductWrap" style="display:none;align-items:center;gap:8px;margin-left:auto;">
-        <span style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Product:</span>
-        <select id="adminProductSelect" onchange="onAdminProductChange()" style="font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);background:var(--bg);border:1.5px solid var(--accent);border-radius:7px;padding:6px 12px;outline:none;cursor:pointer;box-shadow:0 1px 4px rgba(0,169,157,0.12);"></select>
-      </div>
     </div>
 
     <!-- PRODUCTS PANEL -->
@@ -1558,40 +1554,51 @@
 
     <!-- TRACKS PANEL -->
     <div id="panel-tracks" class="admin-panel active">
-      <div class="section-title">Talk Tracks</div>
-
-      <!-- New Talk Track collapsible card -->
-      <div class="new-entry-card" id="trackNewCard" onclick="expandNewCard('track')">
-        <span class="new-entry-label" id="trackFormTitle">+ New Talk Track</span>
-        <span class="new-entry-chevron" id="trackNewChevron">▾</span>
+      <div id="adminProductWrap" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Product:</span>
+        <select id="adminProductSelect" onchange="onAdminProductChange()" style="font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);background:var(--bg);border:1.5px solid var(--accent);border-radius:7px;padding:6px 12px;outline:none;cursor:pointer;box-shadow:0 1px 4px rgba(0,169,157,0.12);"></select>
       </div>
-      <div class="new-entry-body" id="trackNewBody">
-        <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
-          <div class="form-group">
-            <label>Stage Label</label>
-            <input type="text" id="trackTitle" placeholder="e.g. Opener">
+
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-dim);">Talk Tracks</span>
+          <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:1px 8px;font-size:10px;font-family:var(--sans);font-weight:700;color:var(--text-muted);letter-spacing:0.06em;"></span>
+        </div>
+
+        <!-- New Talk Track collapsible card -->
+        <div style="padding:12px 18px;border-bottom:1px solid var(--border);">
+          <div class="new-entry-card" id="trackNewCard" onclick="expandNewCard('track')" style="border-radius:var(--radius);">
+            <span class="new-entry-label" id="trackFormTitle">+ New Talk Track</span>
+            <span class="new-entry-chevron" id="trackNewChevron">▾</span>
           </div>
-          <div class="form-group">
-            <label>Script (exactly what to say)</label>
-            <div class="md-toolbar">
-              <button type="button" onclick="mdWrap('trackBody','**','**')" title="Bold"><b>B</b></button>
-              <button type="button" onclick="mdWrap('trackBody','*','*')" title="Italic"><i>I</i></button>
-              <button type="button" onclick="mdWrap('trackBody','__','__')" title="Underline"><u>U</u></button>
-              <button type="button" onclick="mdBullet('trackBody')" title="Bullet">• List</button>
+          <div class="new-entry-body" id="trackNewBody">
+            <div class="inline-form" style="margin-bottom:0;border-radius:0 0 var(--radius) var(--radius);border-top:none;">
+              <div class="form-group">
+                <label>Stage Label</label>
+                <input type="text" id="trackTitle" placeholder="e.g. Opener">
+              </div>
+              <div class="form-group">
+                <label>Script (exactly what to say)</label>
+                <div class="md-toolbar">
+                  <button type="button" onclick="mdWrap('trackBody','**','**')" title="Bold"><b>B</b></button>
+                  <button type="button" onclick="mdWrap('trackBody','*','*')" title="Italic"><i>I</i></button>
+                  <button type="button" onclick="mdWrap('trackBody','__','__')" title="Underline"><u>U</u></button>
+                  <button type="button" onclick="mdBullet('trackBody')" title="Bullet">• List</button>
+                </div>
+                <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…" class="md-toolbar-area"></textarea>
+              </div>
+              <input type="hidden" id="trackEditId">
+              <div class="btn-row">
+                <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
+                <button class="btn-secondary" onclick="clearTrackForm()">Cancel</button>
+              </div>
             </div>
-            <textarea id="trackBody" rows="10" placeholder="Hi [Name], this is [Your Name] calling from YuJa…" class="md-toolbar-area"></textarea>
-          </div>
-          <input type="hidden" id="trackEditId">
-          <div class="btn-row">
-            <button class="btn-primary" onclick="saveTrack()">Save Talk Track</button>
-            <button class="btn-secondary" onclick="clearTrackForm()">Cancel</button>
           </div>
         </div>
-      </div>
 
-      <!-- Existing list -->
-      <div style="font-family:var(--sans);font-size:11px;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin:20px 0 10px;">Existing Talk Tracks <span id="trackCount" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:1px 8px;margin-left:4px;font-size:10px;"></span></div>
-      <div id="trackList"></div>
+        <!-- Existing list -->
+        <div id="trackList" style="padding:8px 18px 18px;"></div>
+      </div>
     </div>
 
     <!-- OBJECTIONS PANEL -->
@@ -2706,7 +2713,7 @@ function renderAdmin() {
   renderProductList();
   populateSelects();
   renderTrackList();
-  document.getElementById('adminProductWrap').style.display = 'flex';
+
 }
 
 function switchAdminTab(tab) {
@@ -2715,9 +2722,6 @@ function switchAdminTab(tab) {
   });
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
-  // Shared selector: show only on tracks tab
-  const wrap = document.getElementById('adminProductWrap');
-  wrap.style.display = tab === 'tracks' ? 'flex' : 'none';
   if (tab === 'tracks') renderTrackList();
   else if (tab === 'objections') renderAdminObjList();
 }
