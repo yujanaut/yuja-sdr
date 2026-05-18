@@ -1480,25 +1480,6 @@
 
 </div>
 
-<!-- ═══════════ SDR GATE ═══════════ -->
-<div id="view-gate" class="view active">
-  <div class="gate-wrap">
-    <div class="gate-card">
-      <div class="gate-logo">
-        <img src="yuja_logo_final.png" alt="YuJa">
-      </div>
-      <div class="gate-title">SDR Call Playbook</div>
-      <div class="gate-sub">Enter your access password to continue.</div>
-      <div class="gate-error" id="gateError">Incorrect password — try again.</div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="gatePassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doGateLogin()">
-      </div>
-      <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="doGateLogin()">Enter</button>
-    </div>
-  </div>
-</div>
-
 <!-- ═══════════ ADMIN LOGIN ═══════════ -->
 <div id="view-login" class="view">
   <div class="login-wrap">
@@ -2224,7 +2205,6 @@ const CUSTOMERS = [
 const SUPABASE_URL = 'https://wvwcxmqyygtzxdnpfogu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MFYGEU5tFKCZ23j7c3RARQ_5Rk2cSEs';
 const PASS_KEY      = 'yuja_sdr_pass';
-const GATE_AUTH_KEY = 'yuja_sdr_authed';
 let isAdmin = false;
 let data    = { products: [], tracks: [], objections: [] };
 let activePid = null;
@@ -2265,32 +2245,6 @@ async function loadData() {
 function uid() { return '_' + Math.random().toString(36).slice(2,9); }
 function getPass()     { return localStorage.getItem(PASS_KEY) || 'yuja1234'; }
 function setPass(p)    { localStorage.setItem(PASS_KEY, p); }
-function getGatePass() { return 'yujasdr'; }
-function isGateAuthed(){ return sessionStorage.getItem(GATE_AUTH_KEY) === '1'; }
-function setGateAuthed(){ sessionStorage.setItem(GATE_AUTH_KEY, '1'); }
-
-function doGateLogin() {
-  const pw = document.getElementById('gatePassword').value;
-  if (pw === getGatePass()) {
-    setGateAuthed();
-    document.getElementById('gatePassword').value = '';
-    document.getElementById('gateError').classList.remove('visible');
-    loadData().then(() => {
-      const dropdown = document.getElementById('callPlaybookDropdown');
-      const compBtn  = document.getElementById('competitiveNavBtn');
-      const divider  = dropdown ? dropdown.previousElementSibling : null;
-      if (dropdown) dropdown.style.display = 'block';
-      if (divider)  divider.style.display  = 'block';
-      if (compBtn)  compBtn.style.display  = 'flex';
-      document.body.classList.remove('loading');
-      showView('sdr');
-    });
-  } else {
-    document.getElementById('gateError').classList.add('visible');
-    document.getElementById('gatePassword').value = '';
-    document.getElementById('gatePassword').focus();
-  }
-}
 
 let _toastTimer = null;
 function toast(msg, type = 'neutral') {
@@ -2438,16 +2392,6 @@ function doLogin() {
     document.getElementById('loginError').classList.add('visible');
     toast('Incorrect password', 'error');
   }
-}
-function changePassword() {
-  const a = document.getElementById('newPass1').value;
-  const b = document.getElementById('newPass2').value;
-  if (!a) return toast('Enter a password', 'error');
-  if (a !== b) return toast('Passwords do not match', 'error');
-  setPass(a);
-  document.getElementById('newPass1').value = '';
-  document.getElementById('newPass2').value = '';
-  toast('Admin password updated', 'success');
 }
 async function resetAll() {
   if (!confirm('Delete everything? This cannot be undone.')) return;
@@ -3071,7 +3015,7 @@ loadData().then(() => {
 });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/yuja-sdr/sw.js');
+  navigator.serviceWorker.register('/sw.js');
 }
 </script>
 </body>
