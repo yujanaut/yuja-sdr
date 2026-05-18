@@ -2263,7 +2263,7 @@ async function loadData() {
 
 // ── UTILS ─────────────────────────────────────────────────
 function uid() { return '_' + Math.random().toString(36).slice(2,9); }
-function getPass()     { return localStorage.getItem(PASS_KEY) || 'yuja2024'; }
+function getPass()     { return localStorage.getItem(PASS_KEY) || 'yuja1234'; }
 function setPass(p)    { localStorage.setItem(PASS_KEY, p); }
 function getGatePass() { return 'yujasdr'; }
 function isGateAuthed(){ return sessionStorage.getItem(GATE_AUTH_KEY) === '1'; }
