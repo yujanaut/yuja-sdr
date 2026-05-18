@@ -1504,11 +1504,11 @@
   <div class="login-wrap">
     <div class="login-card">
       <div class="login-title">Admin Access</div>
-      <div class="login-sub">Enter your YuJa email to manage content</div>
-      <div class="error-msg" id="loginError">Access denied</div>
+      <div class="login-sub">Enter your password to manage content</div>
+      <div class="error-msg" id="loginError">Incorrect password</div>
       <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="loginPassword" placeholder="you@yuja.com" onkeydown="if(event.key==='Enter')doLogin()">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button class="btn-primary" style="width:100%" onclick="doLogin()">Log In</button>
     </div>
@@ -1668,6 +1668,19 @@
           <button class="btn-secondary" onclick="document.getElementById('importFile').click()">⬆ Import Content</button>
           <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
         </div>
+      </div>
+      <hr class="divider">
+      <div class="section-title">Admin Password</div>
+      <div class="card">
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="newPass1" placeholder="New admin password">
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="newPass2" placeholder="Confirm new admin password">
+        </div>
+        <button class="btn-primary" onclick="changePassword()">Update Admin Password</button>
       </div>
       <hr class="divider">
       <div class="section-title" style="color:var(--danger)">Danger Zone</div>
@@ -2210,8 +2223,8 @@ const CUSTOMERS = [
 // ── SUPABASE ──────────────────────────────────────────────
 const SUPABASE_URL = 'https://wvwcxmqyygtzxdnpfogu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MFYGEU5tFKCZ23j7c3RARQ_5Rk2cSEs';
+const PASS_KEY      = 'yuja_sdr_pass';
 const GATE_AUTH_KEY = 'yuja_sdr_authed';
-const ADMIN_EMAILS  = ['daniel.im@yuja.com', 'sean.luong@yuja.com', 'sean.aitken@yuja.com'];
 let isAdmin = false;
 let data    = { products: [], tracks: [], objections: [] };
 let activePid = null;
@@ -2250,6 +2263,9 @@ async function loadData() {
 
 // ── UTILS ─────────────────────────────────────────────────
 function uid() { return '_' + Math.random().toString(36).slice(2,9); }
+function getPass()     { return localStorage.getItem(PASS_KEY) || 'yuja2024'; }
+function setPass(p)    { localStorage.setItem(PASS_KEY, p); }
+function getGatePass() { return 'yujasdr'; }
 function isGateAuthed(){ return sessionStorage.getItem(GATE_AUTH_KEY) === '1'; }
 function setGateAuthed(){ sessionStorage.setItem(GATE_AUTH_KEY, '1'); }
 
@@ -2410,8 +2426,8 @@ function doLogout() {
   showView('sdr');
 }
 function doLogin() {
-  const email = document.getElementById('loginPassword').value.trim().toLowerCase();
-  if (ADMIN_EMAILS.includes(email)) {
+  const pw = document.getElementById('loginPassword').value;
+  if (pw === getPass()) {
     isAdmin = true;
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginError').classList.remove('visible');
@@ -2420,8 +2436,18 @@ function doLogin() {
     renderAdmin();
   } else {
     document.getElementById('loginError').classList.add('visible');
-    toast('Access denied', 'error');
+    toast('Incorrect password', 'error');
   }
+}
+function changePassword() {
+  const a = document.getElementById('newPass1').value;
+  const b = document.getElementById('newPass2').value;
+  if (!a) return toast('Enter a password', 'error');
+  if (a !== b) return toast('Passwords do not match', 'error');
+  setPass(a);
+  document.getElementById('newPass1').value = '';
+  document.getElementById('newPass2').value = '';
+  toast('Admin password updated', 'success');
 }
 async function resetAll() {
   if (!confirm('Delete everything? This cannot be undone.')) return;
