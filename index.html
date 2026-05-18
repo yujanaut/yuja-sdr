@@ -3059,20 +3059,16 @@ async function importData(e) {
   });
 })();
 
-if (isGateAuthed()) {
-  loadData().then(() => {
-    const dropdown = document.getElementById('callPlaybookDropdown');
-    const compBtn  = document.getElementById('competitiveNavBtn');
-    const divider  = dropdown ? dropdown.previousElementSibling : null;
-    if (dropdown) dropdown.style.display = 'block';
-    if (divider)  divider.style.display  = 'block';
-    if (compBtn)  compBtn.style.display  = 'flex';
-    document.body.classList.remove('loading');
-    showView('sdr');
-  });
-} else {
+loadData().then(() => {
+  const dropdown = document.getElementById('callPlaybookDropdown');
+  const compBtn  = document.getElementById('competitiveNavBtn');
+  const divider  = dropdown ? dropdown.previousElementSibling : null;
+  if (dropdown) dropdown.style.display = 'block';
+  if (divider)  divider.style.display  = 'block';
+  if (compBtn)  compBtn.style.display  = 'flex';
   document.body.classList.remove('loading');
-}
+  showView('sdr');
+});
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/yuja-sdr/sw.js');
