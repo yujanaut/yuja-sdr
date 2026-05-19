@@ -2541,7 +2541,7 @@ function onRefStateChange(idx) {
   const card     = document.getElementById('refResultCard');
   const nameEl   = document.getElementById('refResultName');
   const dropdown = document.getElementById('refDropdown');
-  if (!label || !card) return;
+  if (!label || !card || !nameEl) return;
 
   const match = refFooterList[idx];
   if (match) {
@@ -2998,13 +2998,13 @@ async function importData(e) {
   try {
     const raw = await file.text();
     const imported = JSON.parse(raw);
-    if (!imported.products || !imported.tracks || !imported.objections) return toast('Invalid file format', 'error');
+    if (!Array.isArray(imported.products) || !Array.isArray(imported.tracks) || !Array.isArray(imported.objections)) return toast('Invalid file format', 'error');
     await db('objections', 'DELETE', null, '?id=neq.none');
     await db('tracks',     'DELETE', null, '?id=neq.none');
     await db('products',   'DELETE', null, '?id=neq.none');
     for (const p of imported.products) await db('products',   'POST', { id: p.id, name: p.name, sort_order: 0 });
     for (const t of imported.tracks)   await db('tracks',     'POST', { id: t.id, product_id: t.productId, title: t.title, body: t.body, sort_order: 0 });
-    for (const o of imported.objections) await db('objections', 'POST', { id: o.id, product_id: o.productId, text: o.text, response: o.response, sort_order: 0 });
+    for (const o of imported.objections) await db('objections', 'POST', { id: o.id, product_id: o.productId, type: o.type || '', text: o.text, response: o.response, sort_order: 0 });
     await loadData();
     renderAdmin();
     onAdminProductChange();
