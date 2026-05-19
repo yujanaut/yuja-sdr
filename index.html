@@ -1410,7 +1410,7 @@
     <div class="nav-divider"></div>
     <div class="nav-dropdown" id="callPlaybookDropdown" style="display:none;">
       <button class="nav-dropdown-btn" id="callPlaybookBtn">
-        <span id="callPlaybookBtnLabel">—</span><span class="nav-dropdown-chevron">▾</span>
+        <span id="callPlaybookBtnLabel" style="display:flex;align-items:center;">—</span><span class="nav-dropdown-chevron">▾</span>
       </button>
       <div class="nav-dropdown-menu" id="productBar"></div>
     </div>
@@ -2461,7 +2461,15 @@ function renderSDR() {
   const validPid = savedPid && data.products.find(p => p.id === savedPid) ? savedPid : null;
   activePid = validPid;
   const labelEl = document.getElementById('callPlaybookBtnLabel');
-  if (labelEl) labelEl.textContent = validPid ? data.products.find(p => p.id === validPid).name : 'Select Product';
+  if (labelEl) {
+    if (validPid) {
+      const p = data.products.find(p => p.id === validPid);
+      const icon = getProductIcon(p.name);
+      labelEl.innerHTML = icon ? `<img src="${icon}" style="width:20px;height:20px;border-radius:5px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:6px;">${escHtml(p.name)}` : escHtml(p.name);
+    } else {
+      labelEl.textContent = 'Select Product';
+    }
+  }
   if (validPid) {
     document.querySelectorAll('#productBar .product-tab').forEach(b => {
       b.classList.toggle('active', b.dataset.pid === validPid);
@@ -2552,7 +2560,10 @@ function switchProduct(pid) {
   sessionStorage.setItem('yuja_sdr_pid', pid);
   const prod    = data.products.find(p => p.id === pid);
   const labelEl = document.getElementById('callPlaybookBtnLabel');
-  if (labelEl && prod) labelEl.textContent = prod.name;
+  if (labelEl && prod) {
+    const icon = getProductIcon(prod.name);
+    labelEl.innerHTML = icon ? `<img src="${icon}" style="width:20px;height:20px;border-radius:5px;object-fit:contain;flex-shrink:0;vertical-align:middle;margin-right:6px;">${escHtml(prod.name)}` : escHtml(prod.name);
+  }
   const btn  = document.getElementById('callPlaybookBtn');
   const menu = document.getElementById('productBar');
   if (btn)  btn.classList.remove('open');
