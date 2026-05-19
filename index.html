@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SDR Playbook">
-<link rel="icon" href="yuja_logo_transparent.png" type="image/png">
+<link rel="icon" href="yuja-logo.jpeg" type="image/jpeg">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <title>YuJa SDR Playbook</title>
@@ -189,7 +189,9 @@
   .nav-dropdown-menu.open { display: block; }
 
   .product-tab {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     padding: 9px 14px;
     border: none;
@@ -2424,12 +2426,30 @@ function renderSDR() {
     return;
   }
 
+  const PRODUCT_ICONS = {
+    'verity':      'icon-verity.webp',
+    'lumina':      'icon-evp.webp',
+    'evp':         'icon-evp.webp',
+    'panorama':    'icon-panorama.webp',
+    'equalground': 'icon-equalground.webp',
+  };
+  function getProductIcon(name) {
+    const lower = name.toLowerCase();
+    for (const [key, file] of Object.entries(PRODUCT_ICONS)) {
+      if (lower.includes(key)) return file;
+    }
+    return null;
+  }
+
   // Build product tabs
   data.products.forEach(p => {
     const btn = document.createElement('button');
     btn.className   = 'product-tab';
     btn.dataset.pid = p.id;
-    btn.textContent = p.name;
+    const icon = getProductIcon(p.name);
+    btn.innerHTML = icon
+      ? `<img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:contain;flex-shrink:0;">${escHtml(p.name)}`
+      : escHtml(p.name);
     btn.onclick     = () => switchProduct(p.id);
     bar.appendChild(btn);
   });
