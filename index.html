@@ -217,9 +217,7 @@
     font-weight: 700;
   }
   .product-tab.active img {
-    background: #ffffff;
     border-radius: 6px;
-    padding: 2px;
   }
 
   /* Two-column body — offset left for sidebar */
@@ -2452,7 +2450,7 @@ function renderSDR() {
     btn.dataset.pid = p.id;
     const icon = getProductIcon(p.name);
     btn.innerHTML = icon
-      ? `<img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:contain;flex-shrink:0;">${escHtml(p.name)}`
+      ? `<img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:contain;flex-shrink:0;mix-blend-mode:screen;">${escHtml(p.name)}`
       : escHtml(p.name);
     btn.onclick     = () => switchProduct(p.id);
     bar.appendChild(btn);
