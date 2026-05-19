@@ -2903,6 +2903,7 @@ async function saveObj() {
   const text = document.getElementById('objText').value.trim();
   const resp = document.getElementById('objResponse').value.trim();
   const eid  = document.getElementById('objEditId').value;
+  if (!pid) return toast('Select a product first', 'error');
   if (!type) return toast('Select a type', 'error');
   if (!text || !resp) return toast('Fill in all fields', 'error');
   try {
