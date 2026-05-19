@@ -2415,6 +2415,20 @@ async function resetAll() {
 // ══════════════════════════════════════════
 //  SDR RENDER
 // ══════════════════════════════════════════
+const PRODUCT_ICONS = {
+  'verity':      'icon-verity.png',
+  'lumina':      'icon-evp.png',
+  'panorama':    'icon-panorama.png',
+  'equalground': 'icon-equalground.png',
+};
+function getProductIcon(name) {
+  const lower = name.toLowerCase();
+  for (const [key, file] of Object.entries(PRODUCT_ICONS)) {
+    if (lower.includes(key)) return file;
+  }
+  return null;
+}
+
 function renderSDR() {
   const bar     = document.getElementById('productBar');
   const trackEl = document.getElementById('trackPanel');
@@ -2427,20 +2441,6 @@ function renderSDR() {
     trackEl.innerHTML = '<div class="empty-state">Ask your admin to set up content.</div>';
     objEl.innerHTML   = '<div class="empty-state">No objections yet.</div>';
     return;
-  }
-
-  const PRODUCT_ICONS = {
-    'verity':      'icon-verity.png',
-    'lumina':      'icon-evp.png',
-    'panorama':    'icon-panorama.png',
-    'equalground': 'icon-equalground.png',
-  };
-  function getProductIcon(name) {
-    const lower = name.toLowerCase();
-    for (const [key, file] of Object.entries(PRODUCT_ICONS)) {
-      if (lower.includes(key)) return file;
-    }
-    return null;
   }
 
   // Build product tabs
