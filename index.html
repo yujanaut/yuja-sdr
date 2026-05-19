@@ -2917,7 +2917,7 @@ async function saveObj() {
     renderAdminObjList();
     renderSDR();
     toast(eid ? 'Objection updated' : 'Objection saved', 'success');
-  } catch(e) { toast('Error saving objection', 'error'); }
+  } catch(e) { console.error('saveObj error:', e); toast('Error saving objection: ' + e.message, 'error'); }
 }
 function editObj(oid) {
   const o = data.objections.find(o => o.id === oid);
