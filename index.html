@@ -2320,8 +2320,13 @@ async function saveToGitHub() {
       `let data = ${newData};`
     );
 
-    // Encode back to Base64 using TextEncoder to preserve all Unicode characters
-    const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(updated)));
+    // Encode back to Base64 in chunks to avoid call stack overflow on large files
+    const encBytes = new TextEncoder().encode(updated);
+    let encoded = '';
+    for (let i = 0; i < encBytes.length; i += 8192) {
+      encoded += String.fromCharCode(...encBytes.subarray(i, i + 8192));
+    }
+    encoded = btoa(encoded);
 
     const commitRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
       method: 'PUT',
